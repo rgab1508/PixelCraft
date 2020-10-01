@@ -1,14 +1,264 @@
 <html>
 	<head>
-		<script src="lib/p5.min.js"></script>
-		<script src="sketch.js"></script>
 		<title> Pixel Craft </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="lib/p5.min.js" async></script>
+		<script src="sketch.js" async></script>
+		<script src="lib/Matrix.js" async></script>
+		<script src="lib/Shapes.js" async></script>
+		<script src="lib/Transformation.js" async></script>
+		<script src="sketch.js" async></script>
+		<style>
+			@font-face {
+  				font-family: 'Martel Sans';
+  				font-style: normal;
+  				font-weight: 400;
+  				font-display: swap;
+  				src: local('Martel Sans Regular'), local('MartelSans-Regular'), url(https://fonts.gstatic.com/s/martelsans/v6/h0GsssGi7VdzDgKjM-4d8hjYx-4.woff2) format('woff2');
+  				unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+			}
+			* {
+  				font-family: 'Martel Sans', sans-serif;
+			}
+			body {
+				background-color: #232125;
+				margin: 0px;
+			}
+			#popup {
+			    background-color: #332f35;
+			    color: white;
+			    font-size: 20px;
+			    padding: 30px;
+			    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+			    position: fixed;
+			    left: 50%;
+			    top: 50%;
+			    transform: translate(-50%,-50%) scale(0.1,0.1);
+			    text-align: center;
+			    max-width: 420px;
+			    width: 70%;
+				transition: 0.2s all;
+				z-index: 2;
+
+			}
+			#popup h3 {
+				line-height: 30px;
+			}
+			#width,#height {
+				background-color: #262327;
+				color: white;
+				margin: 10px;
+				padding: 5px;
+				font-size: 14px;
+				font-weight: bolder;
+				border: none;
+				border-radius: 3px;
+				max-width: 60px;
+			}
+			#close {
+				background-color: #262327;
+				color: white;
+				margin: 15px auto 5px auto;
+				padding: 5px 10px 5px 10px;
+				font-size: 18px;
+				font-weight: bolder;
+				display: block;
+				border: none;
+				border-radius: 3px;
+				max-width: 60px;
+				transition: 0.2s all;
+			}
+			#close:hover {
+				box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+			}
+			#canvas {
+				box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+				width: 75%;
+				max-width: 550px;
+				display: none;
+				cursor: crosshair;
+			}
+			#toolbar {
+				position: fixed;
+				top: 50%;
+				left: 0%;
+				transform: translateY(-50%);
+				padding: 0px;
+				color: white;
+				max-width: 150px;
+			}
+			#toolbar .item {
+				display: inline-block;
+				float: left;
+				padding: 15px;
+				border: 1px solid #FFF;
+				cursor: pointer;
+			}
+			#palette {
+				position: fixed;
+				top: 50%;
+				right: 0%;
+				transform: translateY(-50%);
+				padding: 0px;
+				color: white;
+				max-width: 100px;
+			}
+			#palette .item {
+				display: inline-block;
+				float: left;
+				padding: 25px;
+				cursor: pointer;
+			}
+			path {
+				fill: white;
+			}
+			@media only screen and (max-width: 350px) {
+  				#toolbar {
+					position: fixed;
+					top: 100%;
+					left: 50%;
+					min-width: 100%;
+					transform: translate(-50%,-100%);
+					padding: 0px;
+					color: white;
+				}
+				#palette {
+					position: fixed;
+					top: 0%;
+					transform: translateY(0%);
+					min-width: 100%;
+					padding: 0px;
+					color: white;
+				}
+			}
+		</style>
 	</head>
 	<body>
-		<h1> Pixel Craft </h1>
-		<script src="lib/Matrix.js"></script>
-		<script src="lib/Shapes.js"></script>
-		<script src="lib/Transformation.js"></script>
-		<script src="sketch.js"></script>
+		<div id="popup">
+			<h3>Select the Dimensions Of the grid</h3>
+			<input type="text" id="width" value="64">X<input type="text" id="height" value="64">
+			<button id="close">OK</button>
+		</div>
+		<canvas id="canvas"></canvas>
+		<div id="toolbar">
+			<span class="item">
+				<svg width="32" height="32" viewBox="0 0 1792 1792"><path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z" fill="#fff"></path></svg>
+			</span>
+			<span class="item">
+				<svg width="32" height="32" viewBox="0 0 1792 1792"><path d="M832 1408l336-384h-768l-336 384h768zm1013-1077q15 34 9.5 71.5t-30.5 65.5l-896 1024q-38 44-96 44h-768q-38 0-69.5-20.5t-47.5-54.5q-15-34-9.5-71.5t30.5-65.5l896-1024q38-44 96-44h768q38 0 69.5 20.5t47.5 54.5z" fill="#fff"></path></svg>
+			</span>
+			<span class="item">
+				<svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 18.713 18.713" style="enable-background:new 0 0 18.713 18.713;" xml:space="preserve" width="32" height="32">
+	<path d="M13.367,6.434L8.872,1.895l-0.65-0.672L6.687,2.731c-2.624-0.375-4.51,0.59-5.178,1.777   C0.698,5.949,1.527,7.522,1.553,7.57c0.693,1.385,1.689,2.216,2.961,2.473c0.279,0.055,0.56,0.08,0.84,0.08   c1.322,0,2.644-0.561,3.649-1.135c0.271,0.188,0.601,0.299,0.954,0.299c0.93,0,1.686-0.759,1.686-1.691s-0.756-1.69-1.686-1.69   s-1.686,0.758-1.686,1.69c0,0.093,0.013,0.184,0.027,0.274C7.286,8.445,5.951,8.986,4.77,8.748C3.905,8.573,3.237,7.995,2.719,6.96   C2.714,6.95,2.203,5.957,2.654,5.157c0.38-0.676,1.371-1.111,2.883-1.275L5.302,4.119L3.13,6.299   c0.023,0.053,0.04,0.085,0.041,0.087c0.209,0.418,0.444,0.758,0.706,1.03l3.932-3.943c0.187-0.187,0.435-0.29,0.698-0.29   s0.513,0.103,0.698,0.29l4.771,4.787c0.385,0.385,0.385,1.014,0,1.399L7.774,15.88c-0.372,0.373-1.023,0.373-1.396,0l-4.772-4.787   c-0.187-0.186-0.289-0.434-0.289-0.699c0-0.264,0.102-0.514,0.289-0.7l0.515-0.518C1.828,8.874,1.568,8.512,1.335,8.098   l-0.66,0.663C0.24,9.197,0,9.777,0,10.394c0,0.617,0.24,1.197,0.675,1.633l4.772,4.787c0.435,0.436,1.012,0.676,1.628,0.676   c0.614,0,1.193-0.24,1.628-0.676l6.201-6.221L16.205,9.3l-0.361-0.365c0.683-0.373,0.987,2.744,0.987,2.744s0.954,7.439,1.802,0   C19.443,4.56,13.854,6.272,13.367,6.434z" fill="#FFFFFF"></path></svg>
+			</span>
+			<span class="item"><svg id="Capa_1" enable-background="new 0 0 512 512" height="32" viewBox="0 0 512 512" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m512 98.857v-98.857h-98.857v77.645l-128.927 128.926h-77.645v77.645l-128.927 128.927h-77.644v98.857h98.857v-77.645l128.927-128.926h77.645v-77.645l128.926-128.927z"/></svg></span>
+		<span class="item"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="32px" width="32px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+		<path d="M256,0C114.509,0,0,114.497,0,256c0,141.491,114.497,256,256,256c141.491,0,256-114.497,256-256
+			C512,114.509,397.503,0,256,0z M256,477.867c-122.337,0-221.867-99.529-221.867-221.867S133.663,34.133,256,34.133
+			S477.867,133.663,477.867,256S378.337,477.867,256,477.867z"/></svg>
+		</span>
+		<span class="item">
+			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" height="32" width="32" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+			<path d="M435.204,126.967C387.398,94.1,324.11,76,257,76c-67.206,0-130.824,18.084-179.138,50.922C27.652,161.048,0,206.889,0,256
+			c0,49.111,27.652,94.952,77.862,129.078C126.176,417.916,189.794,436,257,436c67.11,0,130.398-18.1,178.204-50.967
+			C484.727,350.986,512,305.161,512,256S484.727,161.014,435.204,126.967z M418.208,360.312C375.354,389.774,318.103,406,257,406
+			c-61.254,0-118.884-16.242-162.273-45.733C52.986,331.898,30,294.868,30,256s22.986-75.898,64.727-104.267
+			C138.116,122.242,195.746,106,257,106c61.103,0,118.354,16.226,161.208,45.688C459.345,179.97,482,217.015,482,256
+			S459.345,332.03,418.208,360.312z"/>
+			</svg>
+		</span>
+		<span class="item">
+			
+<svg height="32" viewBox="0 0 448 448" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40 40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969 0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8 8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/></svg>
+		</span>
+		<span class="item">
+			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" height="32" width="32" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+			<path d="M142.716,293.147l-94-107.602l94-107.602c7.596-8.705,6.71-21.924-1.995-29.527c-8.705-7.596-21.917-6.703-29.527,1.995
+			L5.169,171.782c-6.892,7.882-6.892,19.65,0,27.532l106.026,121.372c4.143,4.729,9.94,7.157,15.771,7.157
+			c4.883,0,9.786-1.702,13.755-5.169C149.427,315.071,150.319,301.852,142.716,293.147z"/>
+		<path d="M359.93,164.619H20.926C9.368,164.619,0,173.986,0,185.545c0,11.558,9.368,20.926,20.926,20.926H359.93
+			c60.776,0,110.218,49.441,110.218,110.211S420.706,426.893,359.93,426.893H48.828c-11.558,0-20.926,9.368-20.926,20.926
+			c0,11.558,9.368,20.926,20.926,20.926H359.93c83.844,0,152.07-68.219,152.07-152.063S443.781,164.619,359.93,164.619z"/>
+		</svg>
+		</span>
+		<span class="item">
+			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="32" width="32" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512; transform: rotateZ(180deg);" xml:space="preserve">
+			<path d="M142.716,293.147l-94-107.602l94-107.602c7.596-8.705,6.71-21.924-1.995-29.527c-8.705-7.596-21.917-6.703-29.527,1.995
+			L5.169,171.782c-6.892,7.882-6.892,19.65,0,27.532l106.026,121.372c4.143,4.729,9.94,7.157,15.771,7.157
+			c4.883,0,9.786-1.702,13.755-5.169C149.427,315.071,150.319,301.852,142.716,293.147z"/>
+		<path d="M359.93,164.619H20.926C9.368,164.619,0,173.986,0,185.545c0,11.558,9.368,20.926,20.926,20.926H359.93
+			c60.776,0,110.218,49.441,110.218,110.211S420.706,426.893,359.93,426.893H48.828c-11.558,0-20.926,9.368-20.926,20.926
+			c0,11.558,9.368,20.926,20.926,20.926H359.93c83.844,0,152.07-68.219,152.07-152.063S443.781,164.619,359.93,164.619z"/>
+		</svg>
+		</span>
+		</div>
+		<div id="palette">
+			<span class="item" style="background-color: red"></span>
+			<span class="item" style="background-color: green"></span>
+			<span class="item" style="background-color: blue"></span>
+			<span class="item" style="background-color: yellow"></span>
+			<span class="item" style="background-color: orange"></span>
+			<span class="item" style="background-color: red"></span>
+			<span class="item" style="background-color: green"></span>
+			<span class="item" style="background-color: blue"></span>
+			<span class="item" style="background-color: yellow"></span>
+			<span class="item" style="background-color: orange"></span>
+		</div>
 	</body>
+	<script type="text/javascript">
+		class Canvas {
+			constructor(width,height) {
+				this.canvas = document.querySelector("#canvas");
+				this.width = width;
+				this.height = height;
+				this.canvas.style.display = "block";
+				this.canvas.style.height = Math.floor((height/width)*this.canvas.clientWidth)+"px";
+				this.w = +this.canvas.width;
+				this.h = +this.canvas.height;
+				this.ctx = this.canvas.getContext("2d");
+				this.ctx.fillStyle = "white";
+				this.ctx.fillRect(0, 0, this.w, this.h);
+				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,0]));
+				this.canvas.addEventListener("mousemove",e => {
+					var rect = this.canvas.getBoundingClientRect();
+      				var x = e.clientX - rect.left;
+      				var y = e.clientY - rect.top;
+      				console.log(Math.floor(x*this.width/this.w),Math.floor(y*this.height/this.h))
+				})
+			}
+			draw(x,y) {
+				//this.data[x][y] = this.color;
+				this.ctx.fillRect(Math.floor(x*(this.w/this.width)), Math.floor(y*(this.h/this.height)), Math.floor(this.w/this.width), Math.floor(this.h/this.height));
+			}
+			setcolor(color) {
+				this.color = color;
+				this.ctx.fillStyle = "rgba("+color[0]+","+color[1]+","+color[2]+","+color[3]+")";
+			}
+		}
+		class Popup {
+			constructor() {
+				document.querySelector("#popup").style.transform="translate(-50%,-50%) scale(1,1)";
+			}
+			close() {
+				document.querySelector("#popup").style.transform="translate(-50%,-50%) scale(0,0)";
+			}
+		}
+		window.onload = function() {
+			window.dim = new Popup();
+		}
+		document.querySelector("#close").onclick = function() {
+			var width = +document.querySelector("#width").value;
+			var height = +document.querySelector("#height").value;
+			window.board = new Canvas(width,height);
+
+			window.dim.close();
+		}
+	</script>
 </html>
