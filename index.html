@@ -2,8 +2,6 @@
 	<head>
 		<title> Pixel Craft </title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<script src="lib/p5.min.js" async></script>
-		<script src="sketch.js" async></script>
 		<script src="lib/Matrix.js" async></script>
 		<script src="lib/Shapes.js" async></script>
 		<script src="lib/Transformation.js" async></script>
@@ -119,6 +117,36 @@
 		    .item:hover {
 				background-color: grey;
 			}
+			.menubtn {
+				position: fixed;
+				left: 20px;
+				top: 20px;
+				box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+				background-color: #332f35;
+				color: white;
+				padding: 5px 15px 5px 15px;
+				border-radius: 5px;
+				font-size: 25px;
+				font-weight: bolder;
+				cursor: pointer;
+				z-index: 3;
+			}
+			.menu {
+				position: fixed;
+				top: 70px;
+				left: 20px;
+				border-radius: 5px;
+				padding: 0px;
+				color: white;
+				z-index: 3;
+				display: none;
+			}
+			.menu li {
+				padding: 5px 20px 5px 20px;
+				list-style: none;
+				background-color: #332f35;
+				cursor: pointer;
+			}
 			@media only screen and (max-width: 600px) {
   				#toolbar {
 					position: fixed;
@@ -148,6 +176,11 @@
 		</style>
 	</head>
 	<body>
+		<div class="menubtn">☰</div>
+		<ul class="menu">
+			<li onclick="board.save()">Save image</li>
+			<li onclick="gif.render()">Save GIF</li>
+		</ul>
 		<div id="popup">
 			<h3>Select the Dimensions Of the grid</h3>
 			<input type="text" id="width" value="30">X<input type="text" id="height" value="30">
@@ -155,7 +188,7 @@
 		</div>
 		<canvas id="canvas"></canvas>
 		<div id="toolbar">
-			<span class="item" onclick="board.setmode(0)">
+			<span class="item" style="background-color: grey;" onclick="board.setmode(0)">
 				<svg width="32" height="32" viewBox="0 0 1792 1792"><path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z" fill="#fff"></path></svg>
 			</span>
 			<span class="item" onclick="board.setmode(1)">
@@ -220,7 +253,8 @@
 		<div id="palette"></div>
 	</body>
 	<script type="text/javascript">
-		var tools = [false,false,false,false,false,false];
+		var tools = [true,false,false,false,false,false];
+		var lc = [];
 		class Canvas {
 			constructor(width,height) {
 				this.canvas = document.querySelector("#canvas");
@@ -233,7 +267,7 @@
 				this.w = +this.canvas.width;
 				this.h = +this.canvas.height;
 				this.ctx = this.canvas.getContext("2d");
-				this.ctx.fillStyle = "white";
+				this.ctx.fillStyle="white";
 				this.ctx.fillRect(0, 0, this.w, this.h);
 				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
 				this.canvas.addEventListener("click",e => {
@@ -245,12 +279,32 @@
       				if (tools[2]) {
       					filler(x,y,this.data[x][y]);
       				}
-      				if (tools[1]) {
+      				else if (tools[1]) {
       					var temp = this.color;
       					this.setcolor([255,255,255,255]);
-      					draw(x,y);
+      					this.draw(x,y);
       					this.setcolor(temp);
       				}
+      				else if (tools[3]) {
+      					lc.push(new Point(x,y));
+      					if (lc.length==2) {
+      						var lp = line(lc[0],lc[1]);
+      						lc = [];
+      						var p;
+      						for (p of lp) this.draw(p.x,p.y);
+      					}
+      				}
+      				else if (tools[4]) {
+      					var centre = new Point(x,y);
+      					var radius = +prompt("radius?");
+      					var lp = circle(radius,centre);
+      					var p;
+      					for (p of lp) this.draw(p.x,p.y);
+      				}
+      				else {
+      					this.draw(x,y);
+      				}
+
 				})
 				this.canvas.addEventListener("mousemove",e => {
 					if (this.active) {
@@ -280,6 +334,10 @@
 			setmode(i) {
 				tools = [false,false,false,false,false,false];
 				tools[i] = true;
+				document.querySelectorAll("#toolbar .item").forEach((x,i)=>{
+					if (tools[i]) x.style.backgroundColor="grey";
+					else x.style.backgroundColor="";
+				})
 			}
 			save() {
 				this.canvas.toBlob(function(blob) {
@@ -305,12 +363,13 @@
 		window.onload = function() {
 			window.dim = new Popup();
 			window.colors = [[0,0,0,255],[127,127,127,255],[136,0,21,255],[237,28,36,255],[255,127,39,255],[255,242,0,255],[34,177,36,255],[0,162,232,255],[63,72,204,255],[163,73,164,255],[255,255,255,255],[195,195,195,255],[185,122,87,255],[255,174,201,255],[255,201,14,255],[239,228,176,255],[181,230,29,255],[153,217,234,255],[112,146,190,255],[200,191,231,255]];
-			document.querySelector("#palette").innerHTML = colors.map(x=>`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}])"></span>`).join("\n");
+			document.querySelector("#palette").innerHTML = colors.map(x=>`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);"></span>`).join("\n");
 		}
 		document.querySelector("#close").onclick = function() {
 			var width = +document.querySelector("#width").value;
 			var height = +document.querySelector("#height").value;
 			window.board = new Canvas(width,height);
+			window.board.setcolor([0,0,0,255]);
 			window.dim.close();
 			window.gif = new GIF({
   				workers: 2,
@@ -321,6 +380,9 @@
 			window.gif.on('finished', function(blob) {
   				window.open(URL.createObjectURL(blob));
 			});
+		}
+		document.querySelector(".menubtn").onclick = function() {
+			document.querySelector(".menu").style.display = document.querySelector(".menu").style.display!="block"?"block":"none"; 
 		}
 		function filler(x,y,cc) {
 			if (x>=0 && x<board.width && y>=0 && y<board.height) {
@@ -333,5 +395,12 @@
 				}
 			}
 		}
+		function act(clr) {
+			document.querySelectorAll("#palette .item").forEach(x=>x.style.boxShadow="");
+			clr.style.boxShadow="10px 10px 10px 10px rgba(0,0,0,0.5)";
+		}
+		window.onbeforeunload = function() {
+  			return "Data will be lost if you leave the page, are you sure?";
+		};
 	</script>
 </html>
