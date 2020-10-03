@@ -253,6 +253,18 @@
 		<div id="palette"></div>
 	</body>
 	<script type="text/javascript">
+		var Tool = {
+			"pen": 0,
+			"eraser": 1,
+			"fillBucket": 2,
+			"line": 3,
+			"circle" : 4,
+			"ellipse" : 5,
+			"addFrame" : 6,
+			"undo": 7,
+			"redo": 8,
+			"save": 9
+		};
 		var tools = [true,false,false,false,false,false];
 		var lc = [];
 		class Canvas {
@@ -276,16 +288,16 @@
       					var y = e.clientY - rect.top;
       					x = Math.floor(this.width*x/this.canvas.clientWidth)
       					y = Math.floor(this.height*y/this.canvas.clientHeight);
-      				if (tools[2]) {
+      				if (tools[Tool.fillBucket]) {
       					filler(x,y,this.data[x][y]);
       				}
-      				else if (tools[1]) {
+      				else if (tools[Tool.eraser]) {
       					var temp = this.color;
       					this.setcolor([255,255,255,255]);
       					this.draw(x,y);
       					this.setcolor(temp);
       				}
-      				else if (tools[3]) {
+      				else if (tools[Tool.line]) {
       					lc.push(new Point(x,y));
       					if (lc.length==2) {
       						var lp = line(lc[0],lc[1]);
@@ -294,7 +306,7 @@
       						for (p of lp) this.draw(p.x,p.y);
       					}
       				}
-      				else if (tools[4]) {
+      				else if (tools[Tool.circle]) {
       					var centre = new Point(x,y);
       					var radius = +prompt("radius?");
       					var lp = circle(radius,centre);
@@ -375,6 +387,7 @@
 			window.colors = [[0,0,0,255],[127,127,127,255],[136,0,21,255],[237,28,36,255],[255,127,39,255],[255,242,0,255],[34,177,36,255],[0,162,232,255],[63,72,204,255],[163,73,164,255],[255,255,255,255],[195,195,195,255],[185,122,87,255],[255,174,201,255],[255,201,14,255],[239,228,176,255],[181,230,29,255],[153,217,234,255],[112,146,190,255],[200,191,231,255]];
 			document.querySelector("#palette").innerHTML = colors.map(x=>`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);"></span>`).join("\n");
 		}
+
 		document.querySelector("#close").onclick = function() {
 			var width = +document.querySelector("#width").value;
 			var height = +document.querySelector("#height").value;
