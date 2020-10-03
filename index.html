@@ -313,6 +313,14 @@
       					var p;
       					for (p of lp) this.draw(p.x,p.y);
       				}
+							else if(tools[Tool.ellipse]){
+								var center = new Point(x, y);
+								var radiusX = +prompt("X radius?");
+								var radiusY = +prompt("Y radius?");
+								var lp = ellipse(radiusX, radiusY, center);
+								for(p of lp)
+									this.draw(p.x, p.y);
+							}
       				else {
       					this.draw(x,y);
       				}
