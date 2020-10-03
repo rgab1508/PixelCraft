@@ -7,7 +7,7 @@
 		<script src="lib/Matrix.js" async></script>
 		<script src="lib/Shapes.js" async></script>
 		<script src="lib/Transformation.js" async></script>
-		<script src="gif.js" async></script>
+		<script src="gif.js"></script>
 		<style>
 			@font-face {
   				font-family: 'Martel Sans';
@@ -291,7 +291,7 @@
 				var img = new Image();
 				img.src = this.canvas.toDataURL();
 				console.log(img.src);
-				gif.addFrame(img);
+				gif.addFrame(this.canvas, {copy: true, delay: 50});
 			}
 		}
 		class Popup {
@@ -312,14 +312,16 @@
 			var height = +document.querySelector("#height").value;
 			window.board = new Canvas(width,height);
 			window.dim.close();
+			window.gif = new GIF({
+  				workers: 2,
+  				quality: 10,
+  				width: 10*window.board.width,
+  				height: 10*window.board.height
+			});
+			window.gif.on('finished', function(blob) {
+  				window.open(URL.createObjectURL(blob));
+			});
 		}
-		var gif = new GIF({
-  			workers: 2,
-  			quality: 10
-		});
-		gif.on('finished', function(blob) {
-  			window.open(URL.createObjectURL(blob));
-		});
 		function filler(x,y,cc) {
 			if (x>=0 && x<board.width && y>=0 && y<board.height) {
 				if (JSON.stringify(board.data[x][y])==JSON.stringify(cc) && JSON.stringify(board.data[x][y])!=JSON.stringify(board.color)) {
