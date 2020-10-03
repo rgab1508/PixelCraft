@@ -270,7 +270,7 @@
 				this.ctx.fillStyle="white";
 				this.ctx.fillRect(0, 0, this.w, this.h);
 				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
-				this.canvas.addEventListener("click",e => {
+				this.canvas.addEventListener("click", e => {
 						var rect = this.canvas.getBoundingClientRect();
       					var x = e.clientX - rect.left;
       					var y = e.clientY - rect.top;
@@ -305,23 +305,30 @@
       					this.draw(x,y);
       				}
 
-				})
-				this.canvas.addEventListener("mousemove",e => {
+				});
+
+				this.canvas.addEventListener("mousemove", e => {
 					if (this.active) {
 						var rect = this.canvas.getBoundingClientRect();
       					var x = e.clientX - rect.left;
       					var y = e.clientY - rect.top;
       					this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
       				}
-				})
-				this.canvas.addEventListener("touchmove",e => {
+				});
+
+				this.canvas.addEventListener("touchmove", e => {
 					var rect = this.canvas.getBoundingClientRect();
       				var x = e.touches[0].clientX - rect.left;
       				var y = e.touches[0].clientY - rect.top;
       				this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
 				})
-				this.canvas.addEventListener("mousedown",e => {this.active = true;});
-				this.canvas.addEventListener("mouseup",e => {this.active = false;});
+
+				this.canvas.addEventListener("mousedown", e => {
+					this.active = true;
+				});
+				this.canvas.addEventListener("mouseup", e => {
+					this.active = false;
+				});
 			}
 			draw(x,y) {
 				this.data[x][y] = this.color;
@@ -342,7 +349,10 @@
 			save() {
 				this.canvas.toBlob(function(blob) {
       				var url = URL.createObjectURL(blob);
-      				window.open(url);
+							var link = document.createElement('a');
+							link.download = 'canvas.png';
+							link.href = url;
+							link.click();
   				})
 			}
 			addFrame() {
@@ -378,7 +388,11 @@
   				height: 10*window.board.height
 			});
 			window.gif.on('finished', function(blob) {
-  				window.open(URL.createObjectURL(blob));
+  				var url = URL.createObjectURL(blob);
+					var link = document.createElement('a');
+					link.download = 'canvas.gif';
+					link.href = url;
+					link.click();
 			});
 		}
 		document.querySelector(".menubtn").onclick = function() {
