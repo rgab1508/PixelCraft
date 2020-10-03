@@ -7,7 +7,7 @@
 		<script src="lib/Matrix.js" async></script>
 		<script src="lib/Shapes.js" async></script>
 		<script src="lib/Transformation.js" async></script>
-		<script src="sketch.js" async></script>
+		<script src="gif.js" async></script>
 		<style>
 			@font-face {
   				font-family: 'Martel Sans';
@@ -116,6 +116,9 @@
 			path {
 				fill: white;
 			}
+		    .item:hover {
+				background-color: grey;
+			}
 			@media only screen and (max-width: 600px) {
   				#toolbar {
 					position: fixed;
@@ -134,35 +137,42 @@
 					padding: 0px;
 					color: white;
 				}
+				#toolbar .item svg {
+					width: 20px;
+					height: 20px;
+				}
+				#palette .item {
+					padding: 15px;
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<div id="popup">
 			<h3>Select the Dimensions Of the grid</h3>
-			<input type="text" id="width" value="64">X<input type="text" id="height" value="64">
+			<input type="text" id="width" value="30">X<input type="text" id="height" value="30">
 			<button id="close">OK</button>
 		</div>
 		<canvas id="canvas"></canvas>
 		<div id="toolbar">
-			<span class="item">
+			<span class="item" onclick="board.setmode(0)">
 				<svg width="32" height="32" viewBox="0 0 1792 1792"><path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z" fill="#fff"></path></svg>
 			</span>
-			<span class="item">
+			<span class="item" onclick="board.setmode(1)">
 				<svg width="32" height="32" viewBox="0 0 1792 1792"><path d="M832 1408l336-384h-768l-336 384h768zm1013-1077q15 34 9.5 71.5t-30.5 65.5l-896 1024q-38 44-96 44h-768q-38 0-69.5-20.5t-47.5-54.5q-15-34-9.5-71.5t30.5-65.5l896-1024q38-44 96-44h768q38 0 69.5 20.5t47.5 54.5z" fill="#fff"></path></svg>
 			</span>
-			<span class="item">
+			<span class="item" onclick="board.setmode(2)">
 				<svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 18.713 18.713" style="enable-background:new 0 0 18.713 18.713;" xml:space="preserve" width="32" height="32">
 	<path d="M13.367,6.434L8.872,1.895l-0.65-0.672L6.687,2.731c-2.624-0.375-4.51,0.59-5.178,1.777   C0.698,5.949,1.527,7.522,1.553,7.57c0.693,1.385,1.689,2.216,2.961,2.473c0.279,0.055,0.56,0.08,0.84,0.08   c1.322,0,2.644-0.561,3.649-1.135c0.271,0.188,0.601,0.299,0.954,0.299c0.93,0,1.686-0.759,1.686-1.691s-0.756-1.69-1.686-1.69   s-1.686,0.758-1.686,1.69c0,0.093,0.013,0.184,0.027,0.274C7.286,8.445,5.951,8.986,4.77,8.748C3.905,8.573,3.237,7.995,2.719,6.96   C2.714,6.95,2.203,5.957,2.654,5.157c0.38-0.676,1.371-1.111,2.883-1.275L5.302,4.119L3.13,6.299   c0.023,0.053,0.04,0.085,0.041,0.087c0.209,0.418,0.444,0.758,0.706,1.03l3.932-3.943c0.187-0.187,0.435-0.29,0.698-0.29   s0.513,0.103,0.698,0.29l4.771,4.787c0.385,0.385,0.385,1.014,0,1.399L7.774,15.88c-0.372,0.373-1.023,0.373-1.396,0l-4.772-4.787   c-0.187-0.186-0.289-0.434-0.289-0.699c0-0.264,0.102-0.514,0.289-0.7l0.515-0.518C1.828,8.874,1.568,8.512,1.335,8.098   l-0.66,0.663C0.24,9.197,0,9.777,0,10.394c0,0.617,0.24,1.197,0.675,1.633l4.772,4.787c0.435,0.436,1.012,0.676,1.628,0.676   c0.614,0,1.193-0.24,1.628-0.676l6.201-6.221L16.205,9.3l-0.361-0.365c0.683-0.373,0.987,2.744,0.987,2.744s0.954,7.439,1.802,0   C19.443,4.56,13.854,6.272,13.367,6.434z" fill="#FFFFFF"></path></svg>
 			</span>
-			<span class="item"><svg id="Capa_1" enable-background="new 0 0 512 512" height="32" viewBox="0 0 512 512" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m512 98.857v-98.857h-98.857v77.645l-128.927 128.926h-77.645v77.645l-128.927 128.927h-77.644v98.857h98.857v-77.645l128.927-128.926h77.645v-77.645l128.926-128.927z"/></svg></span>
-		<span class="item"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="32px" width="32px"
+			<span  onclick="board.setmode(3)" class="item"><svg id="Capa_1" enable-background="new 0 0 512 512" height="32" viewBox="0 0 512 512" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m512 98.857v-98.857h-98.857v77.645l-128.927 128.926h-77.645v77.645l-128.927 128.927h-77.644v98.857h98.857v-77.645l128.927-128.926h77.645v-77.645l128.926-128.927z"/></svg></span>
+		<span class="item"  onclick="board.setmode(4)"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="32px" width="32px"
 	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
 		<path d="M256,0C114.509,0,0,114.497,0,256c0,141.491,114.497,256,256,256c141.491,0,256-114.497,256-256
 			C512,114.509,397.503,0,256,0z M256,477.867c-122.337,0-221.867-99.529-221.867-221.867S133.663,34.133,256,34.133
 			S477.867,133.663,477.867,256S378.337,477.867,256,477.867z"/></svg>
 		</span>
-		<span class="item">
+		<span class="item" onclick="board.setmode(5)">
 			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 512 512" height="32" width="32" style="enable-background:new 0 0 512 512;" xml:space="preserve">
 			<path d="M435.204,126.967C387.398,94.1,324.11,76,257,76c-67.206,0-130.824,18.084-179.138,50.922C27.652,161.048,0,206.889,0,256
@@ -173,7 +183,7 @@
 			S459.345,332.03,418.208,360.312z"/>
 			</svg>
 		</span>
-		<span class="item">
+		<span class="item" onclick="board.addFrame()">
 			
 <svg height="32" viewBox="0 0 448 448" width="32" xmlns="http://www.w3.org/2000/svg"><path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40 40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969 0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8 8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/></svg>
 		</span>
@@ -198,24 +208,24 @@
 			c0,11.558,9.368,20.926,20.926,20.926H359.93c83.844,0,152.07-68.219,152.07-152.063S443.781,164.619,359.93,164.619z"/>
 		</svg>
 		</span>
+		<span class="item" onclick="board.save()">
+			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" height="32" width="32" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<path d="M346,422H166c-8.284,0-15,6.716-15,15s6.716,15,15,15h180c8.284,0,15-6.716,15-15S354.284,422,346,422z"/>
+<path d="M346,302H166c-8.284,0-15,6.716-15,15s6.716,15,15,15h180c8.284,0,15-6.716,15-15S354.284,302,346,302z"/>
+<path d="M346,362H166c-8.284,0-15,6.716-15,15s6.716,15,15,15h180c8.284,0,15-6.716,15-15S354.284,362,346,362z"/>
+<rect x="121" width="210" height="130"/>
+<path d="M507.606,84.394l-80-80C424.793,1.581,420.978,0,417,0h-56v145c0,8.284-6.716,15-15,15H106c-8.284,0-15-6.716-15-15V0H15C6.716,0,0,6.716,0,15v482c0,8.284,6.716,15,15,15c4.645,0,475.762,0,482,0c8.284,0,15-6.716,15-15V95 C512,91.022,510.419,87.207,507.606,84.394z M391,482H121V272h270V482z"/></svg>
+		</span>
 		</div>
-		<div id="palette">
-			<span class="item" style="background-color: red"></span>
-			<span class="item" style="background-color: green"></span>
-			<span class="item" style="background-color: blue"></span>
-			<span class="item" style="background-color: yellow"></span>
-			<span class="item" style="background-color: orange"></span>
-			<span class="item" style="background-color: red"></span>
-			<span class="item" style="background-color: green"></span>
-			<span class="item" style="background-color: blue"></span>
-			<span class="item" style="background-color: yellow"></span>
-			<span class="item" style="background-color: orange"></span>
-		</div>
+		<div id="palette"></div>
 	</body>
 	<script type="text/javascript">
+		var tools = [false,false,false,false,false,false];
 		class Canvas {
 			constructor(width,height) {
 				this.canvas = document.querySelector("#canvas");
+				this.canvas.width = 10*width;
+				this.canvas.height = 10*height;
 				this.width = width;
 				this.height = height;
 				this.canvas.style.display = "block";
@@ -225,21 +235,63 @@
 				this.ctx = this.canvas.getContext("2d");
 				this.ctx.fillStyle = "white";
 				this.ctx.fillRect(0, 0, this.w, this.h);
-				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,0]));
-				this.canvas.addEventListener("mousemove",e => {
-					var rect = this.canvas.getBoundingClientRect();
-      				var x = e.clientX - rect.left;
-      				var y = e.clientY - rect.top;
-      				console.log(Math.floor(x*this.width/this.w),Math.floor(y*this.height/this.h))
+				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
+				this.canvas.addEventListener("click",e => {
+						var rect = this.canvas.getBoundingClientRect();
+      					var x = e.clientX - rect.left;
+      					var y = e.clientY - rect.top;
+      					x = Math.floor(this.width*x/this.canvas.clientWidth)
+      					y = Math.floor(this.height*y/this.canvas.clientHeight);
+      				if (tools[2]) {
+      					filler(x,y,this.data[x][y]);
+      				}
+      				if (tools[1]) {
+      					var temp = this.color;
+      					this.setcolor([255,255,255,255]);
+      					draw(x,y);
+      					this.setcolor(temp);
+      				}
 				})
+				this.canvas.addEventListener("mousemove",e => {
+					if (this.active) {
+						var rect = this.canvas.getBoundingClientRect();
+      					var x = e.clientX - rect.left;
+      					var y = e.clientY - rect.top;
+      					this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
+      				}
+				})
+				this.canvas.addEventListener("touchmove",e => {
+					var rect = this.canvas.getBoundingClientRect();
+      				var x = e.touches[0].clientX - rect.left;
+      				var y = e.touches[0].clientY - rect.top;
+      				this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
+				})
+				this.canvas.addEventListener("mousedown",e => {this.active = true;});
+				this.canvas.addEventListener("mouseup",e => {this.active = false;});
 			}
 			draw(x,y) {
-				//this.data[x][y] = this.color;
+				this.data[x][y] = this.color;
 				this.ctx.fillRect(Math.floor(x*(this.w/this.width)), Math.floor(y*(this.h/this.height)), Math.floor(this.w/this.width), Math.floor(this.h/this.height));
 			}
 			setcolor(color) {
 				this.color = color;
 				this.ctx.fillStyle = "rgba("+color[0]+","+color[1]+","+color[2]+","+color[3]+")";
+			}
+			setmode(i) {
+				tools = [false,false,false,false,false,false];
+				tools[i] = true;
+			}
+			save() {
+				this.canvas.toBlob(function(blob) {
+      				var url = URL.createObjectURL(blob);
+      				window.open(url);
+  				})
+			}
+			addFrame() {
+				var img = new Image();
+				img.src = this.canvas.toDataURL();
+				console.log(img.src);
+				gif.addFrame(img);
 			}
 		}
 		class Popup {
@@ -252,13 +304,32 @@
 		}
 		window.onload = function() {
 			window.dim = new Popup();
+			window.colors = [[0,0,0,255],[127,127,127,255],[136,0,21,255],[237,28,36,255],[255,127,39,255],[255,242,0,255],[34,177,36,255],[0,162,232,255],[63,72,204,255],[163,73,164,255],[255,255,255,255],[195,195,195,255],[185,122,87,255],[255,174,201,255],[255,201,14,255],[239,228,176,255],[181,230,29,255],[153,217,234,255],[112,146,190,255],[200,191,231,255]];
+			document.querySelector("#palette").innerHTML = colors.map(x=>`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}])"></span>`).join("\n");
 		}
 		document.querySelector("#close").onclick = function() {
 			var width = +document.querySelector("#width").value;
 			var height = +document.querySelector("#height").value;
 			window.board = new Canvas(width,height);
-
 			window.dim.close();
+		}
+		var gif = new GIF({
+  			workers: 2,
+  			quality: 10
+		});
+		gif.on('finished', function(blob) {
+  			window.open(URL.createObjectURL(blob));
+		});
+		function filler(x,y,cc) {
+			if (x>=0 && x<board.width && y>=0 && y<board.height) {
+				if (JSON.stringify(board.data[x][y])==JSON.stringify(cc) && JSON.stringify(board.data[x][y])!=JSON.stringify(board.color)) {
+					board.draw(x,y);
+					filler(x+1,y,cc);
+					filler(x,y+1,cc);
+					filler(x-1,y,cc);
+					filler(x,y-1,cc);
+				}
+			}
 		}
 	</script>
 </html>
