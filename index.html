@@ -1,408 +1,451 @@
 <html>
-	<head>
-		<title> Pixel Craft </title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-                <script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
-		<script src="lib/Matrix.js" async></script>
-		<script src="lib/Shapes.js" async></script>
-		<script src="lib/Transformation.js" async></script>
-		<script src="gif.js"></script>
-		<style>
-			@font-face {
-  				font-family: 'Martel Sans';
-  				font-style: normal;
-  				font-weight: 400;
-  				font-display: swap;
-  				src: local('Martel Sans Regular'), local('MartelSans-Regular'), url(https://fonts.gstatic.com/s/martelsans/v6/h0GsssGi7VdzDgKjM-4d8hjYx-4.woff2) format('woff2');
-  				unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-			}
-			* {
-  				font-family: 'Martel Sans', sans-serif;
-			}
-			body {
-				background-color: #232125;
-				margin: 0px;
-			}
-			#popup {
-			    background-color: #332f35;
-			    color: white;
-			    font-size: 20px;
-			    padding: 30px;
-			    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
-			    position: fixed;
-			    left: 50%;
-			    top: 50%;
-			    transform: translate(-50%,-50%) scale(0.1,0.1);
-			    text-align: center;
-			    max-width: 420px;
-			    width: 70%;
-				transition: 0.2s all;
-				z-index: 2;
+<head>
+<title> Pixel Craft </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
+<script src="lib/Matrix.js" async></script>
+<script src="lib/Shapes.js" async></script>
+<script src="lib/Transformation.js" async></script>
+<script src="gif.js"></script>
+<style>
+@font-face {
+  font-family: 'Martel Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Martel Sans Regular'), local('MartelSans-Regular'), url(https://fonts.gstatic.com/s/martelsans/v6/h0GsssGi7VdzDgKjM-4d8hjYx-4.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-			}
-			#popup h3 {
-				line-height: 30px;
-			}
-			#width,#height {
-				background-color: #262327;
-				color: white;
-				margin: 10px;
-				padding: 5px;
-				font-size: 14px;
-				font-weight: bolder;
-				border: none;
-				border-radius: 3px;
-				max-width: 60px;
-			}
-			#close {
-				background-color: #262327;
-				color: white;
-				margin: 15px auto 5px auto;
-				padding: 5px 10px 5px 10px;
-				font-size: 18px;
-				font-weight: bolder;
-				display: block;
-				border: none;
-				border-radius: 3px;
-				max-width: 60px;
-				transition: 0.2s all;
-			}
-			#close:hover {
-				box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
-			}
-			#canvas {
-				box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
-				position: fixed;
-				left: 50%;
-				top: 50%;
-				transform: translate(-50%,-50%);
-				width: 75%;
-				max-width: 550px;
-				display: none;
-				cursor: crosshair;
-			}
-			#toolbar {
-				position: fixed;
-				top: 50%;
-				left: 0%;
-				transform: translateY(-50%);
-				padding: 0px;
-				color: white;
-				max-width: 150px;
-			}
-			#toolbar .item {
-				display: inline-block;
-				float: left;
-				padding: 15px;
-				border: 1px solid #FFF;
-				cursor: pointer;
-                                height: 32px;
-                                width: 32px;
-                                font-family:Arial, FontAwesome;
-                                font-size: 24px;
-			}
-			#palette {
-				position: fixed;
-				top: 50%;
-				right: 0%;
-				transform: translateY(-50%);
-				padding: 0px;
-				color: white;
-				max-width: 100px;
-			}
-			#palette .item {
-				display: inline-block;
-				float: left;
-				padding: 25px;
-				cursor: pointer;
-			}
-			path {
-				fill: white;
-			}
-		        .item:hover {
-				background-color: grey;
-			}
-			.menubtn {
-				position: fixed;
-				left: 20px;
-				top: 20px;
-				box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
-				background-color: #332f35;
-				color: white;
-				padding: 5px 15px 5px 15px;
-				border-radius: 5px;
-				font-size: 25px;
-				font-weight: bolder;
-				cursor: pointer;
-				z-index: 3;
-			}
-			.menu {
-				position: fixed;
-				top: 70px;
-				left: 20px;
-				border-radius: 5px;
-				padding: 0px;
-				color: white;
-				z-index: 3;
-				display: none;
-			}
-			.menu li {
-				padding: 5px 20px 5px 20px;
-				list-style: none;
-				background-color: #332f35;
-				cursor: pointer;
-			}
-			@media only screen and (max-width: 600px) {
-  				#toolbar {
-					position: fixed;
-					top: 100%;
-					left: 50%;
-					min-width: 100%;
-					transform: translate(-50%,-100%);
-					padding: 0px;
-					color: white;
-				}
-				#palette {
-					position: fixed;
-					top: 0%;
-					transform: translateY(0%);
-					min-width: 100%;
-					padding: 0px;
-					color: white;
-				}
-				#toolbar .item {
-					width: 20px;
-					height: 20px;
-				}
-                                #toolbar .item svg {
-                                        width: 20px;
-					height: 20px;
-                                }
-				#palette .item {
-					padding: 15px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div class="menubtn">☰</div>
-		<ul class="menu">
-			<li onclick="board.save()">Save image</li>
-			<li onclick="gif.render()">Save GIF</li>
-		</ul>
-		<div id="popup">
-			<h3>Select the Dimensions Of the grid</h3>
-			<input type="text" id="width" value="16">X<input type="text" id="height" value="16">
-			<button id="close">OK</button>
-		</div>
-		<canvas id="canvas"></canvas>
-		<div id="toolbar">
-			<span class="item" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
-			<span class="item" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
-			<span class="item" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
-			<span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
-		        <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
-		        <span class="item" onclick="board.setmode(5)"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" height="32" width="32"><ellipse cx="50" cy="50" rx="50" ry="30" style="fill: transparent; stroke: white; stroke-width: 10px;"/></svg></span>
-		        <span class="item" onclick="board.addFrame()"><i class="fas fa-plus" style="transform: rotateX(45deg);"></i></span>
-		        <span class="item"><i class="fas fa-undo"></i></span>
-		        <span class="item"><i class="fas fa-redo"></i></span>
-		        <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
-		</div>
-		<div id="palette"></div>
-	</body>
-	<script type="text/javascript">
-		var Tool = {
-			"pen": 0,
-			"eraser": 1,
-			"fillBucket": 2,
-			"line": 3,
-			"circle" : 4,
-			"ellipse" : 5,
-			"addFrame" : 6,
-			"undo": 7,
-			"redo": 8,
-			"clearCanvas": 9
-		};
-		var tools = [true,false,false,false,false,false];
-		var lc = [];
-		class Canvas {
-			constructor(width,height) {
-				this.canvas = document.querySelector("#canvas");
-				this.canvas.width = 10*width;
-				this.canvas.height = 10*height;
-				this.width = width;
-				this.height = height;
-				this.canvas.style.display = "block";
-				this.canvas.style.height = Math.floor((height/width)*this.canvas.clientWidth)+"px";
-				this.w = +this.canvas.width;
-				this.h = +this.canvas.height;
-				this.ctx = this.canvas.getContext("2d");
-				this.ctx.fillStyle="white";
-				this.ctx.fillRect(0, 0, this.w, this.h);
-				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
-				this.canvas.addEventListener("click", e => {
-						var rect = this.canvas.getBoundingClientRect();
-      					var x = e.clientX - rect.left;
-      					var y = e.clientY - rect.top;
-      					x = Math.floor(this.width*x/this.canvas.clientWidth)
-      					y = Math.floor(this.height*y/this.canvas.clientHeight);
-      				if (tools[Tool.fillBucket]) {
-      					filler(x,y,this.data[x][y]);
-      				}
-      				else if (tools[Tool.eraser]) {
-      					var temp = this.color;
-      					this.setcolor([255,255,255,255]);
-      					this.draw(x,y);
-      					this.setcolor(temp);
-      				}
-      				else if (tools[Tool.line]) {
-      					lc.push(new Point(x,y));
-      					if (lc.length==2) {
-      						var lp = line(lc[0],lc[1]);
-      						lc = [];
-      						var p;
-      						for (p of lp) this.draw(p.x,p.y);
-      					}
-      				}
-      				else if (tools[Tool.circle]) {
-      					var centre = new Point(x,y);
-      					var radius = +prompt("radius?");
-      					var lp = circle(radius,centre);
-      					var p;
-      					for (p of lp) this.draw(p.x,p.y);
-      				}
-							else if(tools[Tool.ellipse]){
-								var center = new Point(x, y);
-								var radiusX = +prompt("X radius?");
-								var radiusY = +prompt("Y radius?");
-								var lp = ellipse(radiusX, radiusY, center);
-								for(p of lp)
-									this.draw(p.x, p.y);
-							}
-      				else {
-      					this.draw(x,y);
-      				}
+* {
+  font-family: 'Martel Sans', sans-serif;
+}
 
-				});
+body {
+  background-color: #232125;
+  margin: 0px;
+}
 
-				this.canvas.addEventListener("mousemove", e => {
-					if (this.active) {
-						var rect = this.canvas.getBoundingClientRect();
-      					var x = e.clientX - rect.left;
-      					var y = e.clientY - rect.top;
-      					this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
-      				}
-				});
+#popup {
+  background-color: #332f35;
+  color: white;
+  font-size: 20px;
+  padding: 30px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.1, 0.1);
+  text-align: center;
+  max-width: 420px;
+  width: 70%;
+  transition: 0.2s all;
+  z-index: 2;
+}
 
-				this.canvas.addEventListener("touchmove", e => {
-					var rect = this.canvas.getBoundingClientRect();
-      				var x = e.touches[0].clientX - rect.left;
-      				var y = e.touches[0].clientY - rect.top;
-      				this.draw(Math.floor(this.width*x/this.canvas.clientWidth),Math.floor(this.height*y/this.canvas.clientHeight))
-				})
+#popup h3 {
+  line-height: 30px;
+}
 
-				this.canvas.addEventListener("mousedown", e => {
-					this.active = true;
-				});
-				this.canvas.addEventListener("mouseup", e => {
-					this.active = false;
-				});
-			}
-			draw(x,y) {
-				this.data[x][y] = this.color;
-				this.ctx.fillRect(Math.floor(x*(this.w/this.width)), Math.floor(y*(this.h/this.height)), Math.floor(this.w/this.width), Math.floor(this.h/this.height));
-			}
-			setcolor(color) {
-				this.color = color;
-				this.ctx.fillStyle = "rgba("+color[0]+","+color[1]+","+color[2]+","+color[3]+")";
-			}
-			setmode(i) {
-				tools = [false,false,false,false,false,false];
-				tools[i] = true;
-				document.querySelectorAll("#toolbar .item").forEach((x,i)=>{
-					if (tools[i]) x.style.backgroundColor="grey";
-					else x.style.backgroundColor="";
-				})
-			}
-			save() {
-				this.canvas.toBlob(function(blob) {
-      				var url = URL.createObjectURL(blob);
-							var link = document.createElement('a');
-							link.download = 'canvas.png';
-							link.href = url;
-							link.click();
-  				})
-			}
+#width,
+#height {
+  background-color: #262327;
+  color: white;
+  margin: 10px;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: bolder;
+  border: none;
+  border-radius: 3px;
+  max-width: 60px;
+}
 
-			clear() {
-				this.ctx.fillStyle = "white";
-				this.ctx.fillRect(0, 0, this.w, this.h);
-				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
-				this.setcolor(this.color);
-				this.setMode(Tool.pen);
-			}
-			
-			addFrame() {
-				var img = new Image();
-				img.src = this.canvas.toDataURL();
-				console.log(img.src);
-				gif.addFrame(this.canvas, {copy: true, delay: 100});
-			}
-		}
-		class Popup {
-			constructor() {
-				document.querySelector("#popup").style.transform="translate(-50%,-50%) scale(1,1)";
-			}
-			close() {
-				document.querySelector("#popup").style.transform="translate(-50%,-50%) scale(0,0)";
-			}
-		}
-		window.onload = function() {
-			window.dim = new Popup();
-			window.colors = [[0,0,0,255],[127,127,127,255],[136,0,21,255],[237,28,36,255],[255,127,39,255],[255,242,0,255],[34,177,36,255],[0,162,232,255],[63,72,204,255],[163,73,164,255],[255,255,255,255],[195,195,195,255],[185,122,87,255],[255,174,201,255],[255,201,14,255],[239,228,176,255],[181,230,29,255],[153,217,234,255],[112,146,190,255],[200,191,231,255]];
-			document.querySelector("#palette").innerHTML = colors.map(x=>`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);"></span>`).join("\n");
-		}
+#close {
+  background-color: #262327;
+  color: white;
+  margin: 15px auto 5px auto;
+  padding: 5px 10px 5px 10px;
+  font-size: 18px;
+  font-weight: bolder;
+  display: block;
+  border: none;
+  border-radius: 3px;
+  max-width: 60px;
+  transition: 0.2s all;
+}
 
-		document.querySelector("#close").onclick = function() {
-			var width = +document.querySelector("#width").value;
-			var height = +document.querySelector("#height").value;
-			window.board = new Canvas(width,height);
-			window.board.setcolor([0,0,0,255]);
-			window.dim.close();
-			window.gif = new GIF({
-  				workers: 2,
-  				quality: 10,
-  				width: 10*window.board.width,
-  				height: 10*window.board.height
-			});
-			window.gif.on('finished', function(blob) {
-  				var url = URL.createObjectURL(blob);
-					var link = document.createElement('a');
-					link.download = 'canvas.gif';
-					link.href = url;
-					link.click();
-			});
-		}
-		document.querySelector(".menubtn").onclick = function() {
-			document.querySelector(".menu").style.display = document.querySelector(".menu").style.display!="block"?"block":"none"; 
-		}
-		function filler(x,y,cc) {
-			if (x>=0 && x<board.width && y>=0 && y<board.height) {
-				if (JSON.stringify(board.data[x][y])==JSON.stringify(cc) && JSON.stringify(board.data[x][y])!=JSON.stringify(board.color)) {
-					board.draw(x,y);
-					filler(x+1,y,cc);
-					filler(x,y+1,cc);
-					filler(x-1,y,cc);
-					filler(x,y-1,cc);
-				}
-			}
-		}
-		function act(clr) {
-			document.querySelectorAll("#palette .item").forEach(x=>x.style.boxShadow="");
-			clr.style.boxShadow="10px 10px 10px 10px rgba(0,0,0,0.5)";
-		}
-		window.onbeforeunload = function() {
-  			return "Data will be lost if you leave the page, are you sure?";
-		};
-	</script>
+#close:hover {
+  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+}
+
+#canvas {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  max-width: 550px;
+  display: none;
+  cursor: crosshair;
+}
+
+#toolbar {
+  position: fixed;
+  top: 50%;
+  left: 0%;
+  transform: translateY(-50%);
+  padding: 0px;
+  color: white;
+  max-width: 150px;
+}
+
+#toolbar .item {
+  display: inline-block;
+  float: left;
+  padding: 15px;
+  border: 1px solid #FFF;
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  font-family: Arial, FontAwesome;
+  font-size: 24px;
+}
+
+#palette {
+  position: fixed;
+  top: 50%;
+  right: 0%;
+  transform: translateY(-50%);
+  padding: 0px;
+  color: white;
+  max-width: 100px;
+}
+
+#palette .item {
+  display: inline-block;
+  float: left;
+  padding: 25px;
+  cursor: pointer;
+}
+
+path {
+  fill: white;
+}
+
+.item:hover {
+  background-color: grey;
+}
+
+.menubtn {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  background-color: #332f35;
+  color: white;
+  padding: 5px 15px 5px 15px;
+  border-radius: 5px;
+  font-size: 25px;
+  font-weight: bolder;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.menu {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  border-radius: 5px;
+  padding: 0px;
+  color: white;
+  z-index: 3;
+  display: none;
+}
+
+.menu li {
+  padding: 5px 20px 5px 20px;
+  list-style: none;
+  background-color: #332f35;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+  #toolbar {
+    position: fixed;
+    top: 100%;
+    left: 50%;
+    min-width: 100%;
+    transform: translate(-50%, -100%);
+    padding: 0px;
+    color: white;
+  }
+  #palette {
+    position: fixed;
+    top: 0%;
+    transform: translateY(0%);
+    min-width: 100%;
+    padding: 0px;
+    color: white;
+  }
+  #toolbar .item {
+    width: 20px;
+    height: 20px;
+  }
+  #toolbar .item svg {
+    width: 20px;
+    height: 20px;
+  }
+  #palette .item {
+    padding: 15px;
+  }
+}
+</style>
+</head>
+<body>
+    <div class="menubtn">☰</div>
+    <ul class="menu">
+      <li onclick="board.save()">Save image</li>
+      <li onclick="gif.render()">Save GIF</li>
+    </ul>
+    <div id="popup">
+      <h3>Select the Dimensions Of the grid</h3>
+      <input type="text" id="width" value="16">X<input type="text" id="height" value="16">
+      <button id="close">OK</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="toolbar">
+      <span class="item" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
+      <span class="item" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
+      <span class="item" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
+      <span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
+      <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
+      <span class="item" onclick="board.setmode(5)">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" height="32" width="32">
+          <ellipse cx="50" cy="50" rx="50" ry="30" style="fill: transparent; stroke: white; stroke-width: 10px;"/>
+        </svg>
+      </span>
+      <span class="item" onclick="board.addFrame()"><i class="fas fa-plus" style="transform: rotateX(45deg);"></i></span>
+      <span class="item"><i class="fas fa-undo"></i></span>
+      <span class="item"><i class="fas fa-redo"></i></span>
+      <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
+    </div>
+    <div id="palette"></div>
+</body>
+<script type="text/javascript">
+var Tool = {
+  "pen": 0,
+  "eraser": 1,
+  "fillBucket": 2,
+  "line": 3,
+  "circle": 4,
+  "ellipse": 5,
+  "addFrame": 6,
+  "undo": 7,
+  "redo": 8,
+  "clearCanvas": 9
+};
+var tools = [true, false, false, false, false, false];
+var lc = [];
+class Canvas {
+  constructor(width, height) {
+    this.canvas = document.querySelector("#canvas");
+    this.canvas.width = 10 * width;
+    this.canvas.height = 10 * height;
+    this.width = width;
+    this.height = height;
+    this.canvas.style.display = "block";
+    this.canvas.style.height = Math.floor((height / width) * this.canvas.clientWidth) + "px";
+    this.w = +this.canvas.width;
+    this.h = +this.canvas.height;
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.w, this.h);
+    this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.canvas.addEventListener("click", e => {
+      var rect = this.canvas.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      x = Math.floor(this.width * x / this.canvas.clientWidth);
+      y = Math.floor(this.height * y / this.canvas.clientHeight);
+      if (tools[Tool.fillBucket]) {
+        filler(x, y, this.data[x][y]);
+      } else if (tools[Tool.eraser]) {
+        var temp = this.color;
+        this.setcolor([255, 255, 255, 255]);
+        this.draw(x, y);
+        this.setcolor(temp);
+      } else if (tools[Tool.line]) {
+        lc.push(new Point(x, y));
+        if (lc.length == 2) {
+          var lp = line(lc[0], lc[1]);
+          lc = [];
+          var p;
+          for (p of lp) this.draw(p.x, p.y);
+        }
+      } else if (tools[Tool.circle]) {
+        var centre = new Point(x, y);
+        var radius = +prompt("radius?");
+        var lp = circle(radius, centre);
+        var p;
+        for (p of lp) this.draw(p.x, p.y);
+      } else if (tools[Tool.ellipse]) {
+        var center = new Point(x, y);
+        var radiusX = +prompt("X radius?");
+        var radiusY = +prompt("Y radius?");
+        var lp = ellipse(radiusX, radiusY, center);
+        for (p of lp)
+          this.draw(p.x, p.y);
+      } else {
+        this.draw(x, y);
+      }
+
+    });
+
+    this.canvas.addEventListener("mousemove", e => {
+      if (this.active) {
+        var rect = this.canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        this.draw(Math.floor(this.width * x / this.canvas.clientWidth), Math.floor(this.height * y / this.canvas.clientHeight))
+      }
+    });
+
+    this.canvas.addEventListener("touchmove", e => {
+      var rect = this.canvas.getBoundingClientRect();
+      var x = e.touches[0].clientX - rect.left;
+      var y = e.touches[0].clientY - rect.top;
+      this.draw(Math.floor(this.width * x / this.canvas.clientWidth), Math.floor(this.height * y / this.canvas.clientHeight))
+    })
+
+    this.canvas.addEventListener("mousedown", e => {
+      this.active = true;
+    });
+    this.canvas.addEventListener("mouseup", e => {
+      this.active = false;
+    });
+  }
+  draw(x, y) {
+    this.data[x][y] = this.color;
+    this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
+  }
+  setcolor(color) {
+    this.color = color;
+    this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
+  }
+  setmode(i) {
+    tools = [false, false, false, false, false, false];
+    tools[i] = true;
+    document.querySelectorAll("#toolbar .item").forEach((x, i) => {
+      if (tools[i]) x.style.backgroundColor = "grey";
+      else x.style.backgroundColor = "";
+    })
+  }
+  save() {
+    this.canvas.toBlob(function (blob) {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.download = 'canvas.png';
+      link.href = url;
+      link.click();
+    })
+  }
+
+  clear() {
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.w, this.h);
+    this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.setcolor(this.color);
+    this.setMode(Tool.pen);
+  }
+
+  addFrame() {
+    var img = new Image();
+    img.src = this.canvas.toDataURL();
+    console.log(img.src);
+    gif.addFrame(this.canvas, {
+      copy: true,
+      delay: 100
+    });
+  }
+}
+class Popup {
+  constructor() {
+    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(1,1)";
+  }
+  close() {
+    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(0,0)";
+  }
+}
+window.onload = function () {
+  window.dim = new Popup();
+  window.colors = [
+    [0, 0, 0, 255],
+    [127, 127, 127, 255],
+    [136, 0, 21, 255],
+    [237, 28, 36, 255],
+    [255, 127, 39, 255],
+    [255, 242, 0, 255],
+    [34, 177, 36, 255],
+    [0, 162, 232, 255],
+    [63, 72, 204, 255],
+    [163, 73, 164, 255],
+    [255, 255, 255, 255],
+    [195, 195, 195, 255],
+    [185, 122, 87, 255],
+    [255, 174, 201, 255],
+    [255, 201, 14, 255],
+    [239, 228, 176, 255],
+    [181, 230, 29, 255],
+    [153, 217, 234, 255],
+    [112, 146, 190, 255],
+    [200, 191, 231, 255]
+  ];
+  document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);"></span>`).join("\n");
+}
+
+document.querySelector("#close").onclick = function () {
+  var width = +document.querySelector("#width").value;
+  var height = +document.querySelector("#height").value;
+  window.board = new Canvas(width, height);
+  window.board.setcolor([0, 0, 0, 255]);
+  window.dim.close();
+  window.gif = new GIF({
+    workers: 2,
+    quality: 10,
+    width: 10 * window.board.width,
+    height: 10 * window.board.height
+  });
+  window.gif.on('finished', function (blob) {
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.download = 'canvas.gif';
+    link.href = url;
+    link.click();
+  });
+}
+document.querySelector(".menubtn").onclick = function () {
+  document.querySelector(".menu").style.display = document.querySelector(".menu").style.display != "block" ? "block" : "none";
+}
+
+function filler(x, y, cc) {
+  if (x >= 0 && x < board.width && y >= 0 && y < board.height) {
+    if (JSON.stringify(board.data[x][y]) == JSON.stringify(cc) && JSON.stringify(board.data[x][y]) != JSON.stringify(board.color)) {
+      board.draw(x, y);
+      filler(x + 1, y, cc);
+      filler(x, y + 1, cc);
+      filler(x - 1, y, cc);
+      filler(x, y - 1, cc);
+    }
+  }
+}
+
+function act(clr) {
+  document.querySelectorAll("#palette .item").forEach(x => x.style.boxShadow = "");
+  clr.style.boxShadow = "10px 10px 10px 10px rgba(0,0,0,0.5)";
+}
+window.onbeforeunload = function () {
+  return "Data will be lost if you leave the page, are you sure?";
+};	
+</script>
 </html>
