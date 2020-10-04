@@ -375,7 +375,8 @@
 				this.ctx.fillStyle = "white";
 				this.ctx.fillRect(0, 0, this.w, this.h);
 				this.data = [...Array(this.width)].map(e => Array(this.height).fill([255,255,255,255]));
-				this.setcolor([0,0,0,255]);
+				this.setcolor(this.color);
+				this.setMode(Tool.pen);
 			}
 			
 			addFrame() {
