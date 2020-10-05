@@ -1,0 +1,20 @@
+{
+  "short_name": "PixelCraft",
+  "name": "PixelCraft",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src":"/icons/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },{
+      "src":"/icons/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "Theme_color": "#ffffff",
+  "display": "standalone"
+}
