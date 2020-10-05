@@ -2,6 +2,7 @@
 <head>
 <title> Pixel Craft </title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.json">
 <script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
 <script src="lib/Matrix.js" async></script>
 <script src="lib/Shapes.js" async></script>
@@ -203,6 +204,7 @@ path {
     <ul class="menu">
       <li onclick="board.save()">Save image</li>
       <li onclick="gif.render()">Save GIF</li>
+      <li onclick="install()">Install PWA</li>
     </ul>
     <div id="popup">
       <h3>Select the Dimensions Of the grid</h3>
@@ -439,5 +441,31 @@ function act(clr) {
 window.onbeforeunload = function () {
   return "Data will be lost if you leave the page, are you sure?";
 };	
+
+var scope = {
+  scope: './'
+};
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(
+    'sw.js',
+    scope
+  ).then( function(serviceWorker) {
+    console.log('successful');
+  }).catch(function(error) {
+    alert("error");
+  });
+} else {
+  console.log('unavailable');
+}
+
+var msg;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  msg = e;
+});
+
+function install() {
+  msg.prompt();
+}
 </script>
 </html>
