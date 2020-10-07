@@ -2,7 +2,7 @@
 <head>
 <title> Pixel Craft </title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="manifest.json">
 <script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
 <script src="lib/Matrix.js" async></script>
 <script src="lib/Shapes.js" async></script>
@@ -27,7 +27,7 @@ body {
   margin: 0px;
 }
 
-#popup {
+#popup, #frames {
   background-color: #332f35;
   color: white;
   font-size: 20px;
@@ -42,10 +42,41 @@ body {
   width: 70%;
   transition: 0.2s all;
   z-index: 2;
+  border-radius: 5px;
 }
 
 #popup h3 {
   line-height: 30px;
+}
+
+#frames {
+  display: none;
+  padding: 10px;
+}
+
+#frames #gallery {
+  padding: 10px 10px 10px 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+#frames .btn {
+  position: absolute;
+  background-color: rgba(255,255,255,0.5);
+  color: black;
+  font-size: 20px;
+  padding: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+#frames img {
+  width: 100px;
+  margin: 10px; 
 }
 
 #width,
@@ -196,12 +227,6 @@ path {
   #palette .item {
     padding: 15px;
   }
-  .menubtn {
-    top: 70px;
-  }
-  .menu {
-    top: 110px;
-  }
 }
 </style>
 </head>
@@ -209,13 +234,19 @@ path {
     <div class="menubtn">☰</div>
     <ul class="menu">
       <li onclick="board.save()">Save image</li>
-      <li onclick="gif.render()">Save GIF</li>
+      <li onclick="board.renderGIF()">Save GIF</li>
       <li onclick="install()">Install PWA</li>
     </ul>
     <div id="popup">
       <h3>Select the Dimensions Of the grid</h3>
       <input type="text" id="width" value="16">X<input type="text" id="height" value="16">
       <button id="close">OK</button>
+    </div>
+    <div id="frames" onblur="Frames.close()" tabindex="0">
+    <div class="btn" style="left: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft-=100;"><i class="fa fa-chevron-left"></i></div>
+    <div class="btn" style="right: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft+=100;"><i class="fa fa-chevron-right"></i></div>
+    <div id="gallery"></div>
+    </div>
     </div>
     <canvas id="canvas"></canvas>
     <div id="toolbar">
@@ -229,6 +260,8 @@ path {
       <span class="item"><i class="fas fa-undo"></i></span>
       <span class="item"><i class="fas fa-redo"></i></span>
       <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
+      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
+      <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
     </div>
     <div id="palette"></div>
 </body>
@@ -260,8 +293,10 @@ class Canvas {
     this.h = +this.canvas.height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.fillStyle = "white";
+    this.ctx.globalAlpha = 1;
     this.ctx.fillRect(0, 0, this.w, this.h);
     this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.frames = [];
     this.canvas.addEventListener("click", e => {
       var rect = this.canvas.getBoundingClientRect();
       var x = e.clientX - rect.left;
@@ -272,9 +307,11 @@ class Canvas {
         filler(x, y, this.data[x][y]);
       } else if (tools[Tool.eraser]) {
         var temp = this.color;
+        var tga = this.ctx.globalAlpha;
         this.setcolor([255, 255, 255, 255]);
         this.draw(x, y);
         this.setcolor(temp);
+        this.ctx.globalAlpha = tga;
       } else if (tools[Tool.line]) {
         lc.push(new Point(x, y));
         if (lc.length == 2) {
@@ -330,6 +367,7 @@ class Canvas {
     this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
   }
   setcolor(color) {
+  	this.ctx.globalAlpha = 1;
     this.color = color;
     this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
   }
@@ -356,30 +394,79 @@ class Canvas {
     this.ctx.fillRect(0, 0, this.w, this.h);
     this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
     this.setcolor(this.color);
-    this.setMode(Tool.pen);
+    this.setmode(Tool.pen);
   }
 
   addFrame() {
     var img = new Image();
     img.src = this.canvas.toDataURL();
-    console.log(img.src);
-    gif.addFrame(this.canvas, {
-      copy: true,
-      delay: 100
-    });
+    this.frames.push(img);
   }
+
+  renderGIF() {
+  	this.frames.forEach(frame => {
+  		gif.addFrame(frame, {
+      		copy: true,
+      		delay: 100
+    	});
+  	});
+  	gif.render();
+  }
+
+  /*addImage() {
+    var [width,height,w,h,sc,draw] = [this.width,this.height,this.w,this.h,this.setcolor,this.draw];
+    var fp = document.createElement("input");
+    fp.type = "file";
+    fp.click();
+    fp.onchange = function(e) {
+      var reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = function () {
+        var uimg = new Image();
+        uimg.src = reader.result;
+        uimg.onload = function() {
+          var pxc = document.createElement("canvas");
+          pxc.width = uimg.width;
+          pxc.height = uimg.height;
+          var pxctx = pxc.getContext("2d");
+          pxctx.drawImage(uimg,0,0,uimg.width,uimg.height);
+          alert(pxctx.getImageData(0,0,uimg.width,uimg.height).data);
+          var i,j;
+          for (i=0; i<this.width; i++) {
+            for (j=0; j<this.height; j++) {
+              var pix = pxctx.getImageData(Math.floor(i * (w / width)), Math.floor(j * (h / height)), 1, 1).data;
+              sc(pix);
+              draw(i,j);
+            }
+          }
+        }
+      }
+    }
+  }*/
 }
 class Popup {
-  constructor(s) {
-    this.s = s;
-    document.querySelector(this.s).style.transform = "translate(-50%,-50%) scale(1,1)";
+  constructor() {
+    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(1,1)";
   }
   close() {
-    document.querySelector(this.s).style.transform = "translate(-50%,-50%) scale(0,0)";
+    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(0,0)";
   }
 }
+
+class Frames {
+  static open() {
+  	document.querySelector("#frames").style.display = "block";
+    document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
+    document.querySelector("#frames").focus();
+    for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame);
+  }
+  static close() {
+    document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(0,0)";
+  }
+}
+
 window.onload = function () {
-  window.dim = new Popup("#popup");
+  window.dim = new Popup();
   window.colors = [
     [0, 0, 0, 255],
     [127, 127, 127, 255],
@@ -402,7 +489,9 @@ window.onload = function () {
     [112, 146, 190, 255],
     [200, 191, 231, 255]
   ];
-  document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);"></span>`).join("\n");
+  document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
+
+  document.querySelector("#palette").addEventListener("contextmenu",e=>e.preventDefault());
 }
 
 document.querySelector("#close").onclick = function () {
@@ -473,6 +562,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 function install() {
   msg.prompt();
+}
+
+window.onerror = function (errorMsg, url, lineNumber) {
+  alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
 }
 </script>
 </html>
