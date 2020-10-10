@@ -227,6 +227,12 @@ path {
   #palette .item {
     padding: 15px;
   }
+  .menubtn {
+    top:70px;
+  }
+  .menu {
+    top:110px;
+  }
 }
 </style>
 </head>
@@ -445,11 +451,12 @@ class Canvas {
   }*/
 }
 class Popup {
-  constructor() {
-    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(1,1)";
+  constructor(s) {
+    this.s = s;
+    document.querySelector(this.s).style.transform = "translate(-50%,-50%) scale(1,1)";
   }
   close() {
-    document.querySelector("#popup").style.transform = "translate(-50%,-50%) scale(0,0)";
+    document.querySelector(this.s).style.transform = "translate(-50%,-50%) scale(0,0)";
   }
 }
 
@@ -466,7 +473,7 @@ class Frames {
 }
 
 window.onload = function () {
-  window.dim = new Popup();
+  window.dim = new Popup("#popup");
   window.colors = [
     [0, 0, 0, 255],
     [127, 127, 127, 255],
