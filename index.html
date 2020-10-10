@@ -120,6 +120,7 @@ body {
   max-width: 550px;
   display: none;
   cursor: crosshair;
+  touch-action: none;
 }
 
 #toolbar {
@@ -263,8 +264,8 @@ path {
       <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
       <span class="item" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>
       <span class="item" onclick="board.addFrame()"><i class="fas fa-plus"></i></span>
-      <span class="item"><i class="fas fa-undo"></i></span>
-      <span class="item"><i class="fas fa-redo"></i></span>
+      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>
+      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>
       <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
       <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
       <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
@@ -302,6 +303,8 @@ class Canvas {
     this.ctx.globalAlpha = 1;
     this.ctx.fillRect(0, 0, this.w, this.h);
     this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.steps = [];
+    this.redo_arr = [];
     this.frames = [];
     this.canvas.addEventListener("click", e => {
       var rect = this.canvas.getBoundingClientRect();
@@ -368,9 +371,12 @@ class Canvas {
       this.active = false;
     });
   }
-  draw(x, y) {
-    this.data[x][y] = this.color;
-    this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
+  draw(x, y, count) {
+  	if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+    	this.data[x][y] = this.color;
+    	this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
+    	if (!count && JSON.stringify(this.steps[this.steps.length-1])!==JSON.stringify([x,y,this.color,this.ctx.globalAlpha])) this.steps.push([x,y,this.color,this.ctx.globalAlpha]);
+	}
   }
   setcolor(color) {
   	this.ctx.globalAlpha = 1;
@@ -406,17 +412,59 @@ class Canvas {
   addFrame() {
     var img = new Image();
     img.src = this.canvas.toDataURL();
-    this.frames.push(img);
+    this.frames.push([img,this.data.map(inner => inner.slice())]);
+  }
+
+  deleteFrame(f) {
+  	this.frames.splice(f,1);
+  }
+
+  loadFrame(f) {
+  	this.clear();
+  	var img = this.frames[f][1];
+  	var tmp_color = this.color;
+  	var tmp_alpha = this.ctx.globalAlpha;
+  	this.ctx.globalAlpha = 1;
+  	var i,j;
+  	for (i=0; i<this.width; i++) {
+  		for (j=0; j<this.height; j++) {
+  			this.setcolor(img[i][j]);
+  			this.draw(i,j);
+  		}
+  	}
+  	this.setcolor(tmp_color);
+  	this.ctx.globalAlpha = tmp_alpha;
   }
 
   renderGIF() {
   	this.frames.forEach(frame => {
-  		gif.addFrame(frame, {
+  		gif.addFrame(frame[0], {
       		copy: true,
       		delay: 100
     	});
   	});
   	gif.render();
+  }
+
+  undo() {
+  	this.clear();
+  	this.redo_arr.push(this.steps.pop());
+  	var step;
+  	this.steps.forEach(step => {
+  		this.setcolor(step[2]);
+  		this.ctx.globalAlpha = step[3];
+  		this.draw(step[0],step[1],true);
+  	});
+  }
+
+  redo() {
+  	this.steps.push(this.redo_arr.pop());
+  	var step;
+  	this.steps.forEach(step => {
+  		this.setcolor(step[2]);
+  		this.ctx.globalAlpha = step[3];
+  		this.draw(step[0],step[1],true);
+  	});
   }
 
   /*addImage() {
@@ -465,7 +513,22 @@ class Frames {
   	document.querySelector("#frames").style.display = "block";
     document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
     document.querySelector("#frames").focus();
-    for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame);
+    document.querySelector("#frames #gallery").innerHTML="";
+    for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame[0]);
+    document.querySelectorAll("#frames #gallery img").forEach((x,i) => {
+    	x.onclick = (e) => {
+    		board.loadFrame(i);
+    		Frames.close();
+    	};
+    	x.oncontextmenu = (e) => {
+    		e.preventDefault();
+    		var del_confirmation = confirm("Delete?");
+    		if (del_confirmation) {
+    			board.deleteFrame(i);
+    			Frames.open();
+    		}
+    	};
+    });
   }
   static close() {
     document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(0,0)";
@@ -521,6 +584,7 @@ document.querySelector("#close").onclick = function () {
     link.click();
   });
 }
+
 document.querySelector(".menubtn").onclick = function () {
   document.querySelector(".menu").style.display = document.querySelector(".menu").style.display != "block" ? "block" : "none";
 }
@@ -541,6 +605,7 @@ function act(clr) {
   document.querySelectorAll("#palette .item").forEach(x => x.style.boxShadow = "");
   clr.style.boxShadow = "10px 10px 10px 10px rgba(0,0,0,0.5)";
 }
+
 window.onbeforeunload = function () {
   return "Data will be lost if you leave the page, are you sure?";
 };	
@@ -552,7 +617,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(
     'sw.js',
     scope
-  ).then( function(serviceWorker) {
+  ).then(function(serviceWorker) {
     console.log('successful');
   }).catch(function(error) {
     alert("error");
