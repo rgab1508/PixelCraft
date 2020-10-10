@@ -467,36 +467,41 @@ class Canvas {
   	});
   }
 
-  /*addImage() {
-    var [width,height,w,h,sc,draw] = [this.width,this.height,this.w,this.h,this.setcolor,this.draw];
+  addImage() {
+    var _this = this;
     var fp = document.createElement("input");
     fp.type = "file";
     fp.click();
     fp.onchange = function(e) {
       var reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
-      reader.onload = function () {
+      reader.onload = function() {
         var uimg = new Image();
         uimg.src = reader.result;
+        uimg.width = _this.w;
+        uimg.height = _this.h;
         uimg.onload = function() {
           var pxc = document.createElement("canvas");
-          pxc.width = uimg.width;
-          pxc.height = uimg.height;
+          pxc.width = _this.w;
+          pxc.height = _this.h;
           var pxctx = pxc.getContext("2d");
-          pxctx.drawImage(uimg,0,0,uimg.width,uimg.height);
-          alert(pxctx.getImageData(0,0,uimg.width,uimg.height).data);
+          pxctx.drawImage(uimg,0,0,_this.w,_this.h);
           var i,j;
-          for (i=0; i<this.width; i++) {
-            for (j=0; j<this.height; j++) {
-              var pix = pxctx.getImageData(Math.floor(i * (w / width)), Math.floor(j * (h / height)), 1, 1).data;
-              sc(pix);
-              draw(i,j);
-            }
-          }
+          for (i=0; i<_this.width; i++) {
+        	for (j=0; j<_this.height; j++) {
+        		var ctr = 0;
+        		var avg = [0,0,0,0];
+            	var pix = pxctx.getImageData(10*i, 10*j, 1, 1).data;
+            	pix.forEach((x,k) => {avg[k%4]+=x; if (k%4==0) ctr++;});
+            	avg = avg.map(x=>~~(x/ctr));
+            	_this.setcolor(avg);
+            	_this.draw(i,j);
+        	}
+    	  }
         }
       }
     }
-  }*/
+  }
 }
 class Popup {
   constructor(s) {
