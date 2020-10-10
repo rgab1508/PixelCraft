@@ -491,7 +491,7 @@ class Canvas {
         	for (j=0; j<_this.height; j++) {
         		var ctr = 0;
         		var avg = [0,0,0,0];
-            	var pix = pxctx.getImageData(10*i, 10*j, 1, 1).data;
+            	var pix = pxctx.getImageData(10*i, 10*j, 10, 10).data;
             	pix.forEach((x,k) => {avg[k%4]+=x; if (k%4==0) ctr++;});
             	avg = avg.map(x=>~~(x/ctr));
             	_this.setcolor(avg);
