@@ -44,7 +44,9 @@ body {
   z-index: 2;
   border-radius: 5px;
 }
-
+#popup {
+  display: none;
+}
 #popup h3 {
   line-height: 30px;
 }
@@ -240,6 +242,7 @@ path {
 <body>
     <div class="menubtn">☰</div>
     <ul class="menu">
+      <li onclick="newProject()">New</li>
       <li onclick="board.save()">Save image</li>
       <li onclick="board.renderGIF()">Save GIF</li>
       <li onclick="install()">Install PWA</li>
@@ -409,9 +412,9 @@ class Canvas {
     this.setmode(Tool.pen);
   }
 
-  addFrame() {
+  addFrame(data=null) {
     var img = new Image();
-    img.src = this.canvas.toDataURL();
+    img.src = data || this.canvas.toDataURL();
     this.frames.push([img,this.data.map(inner => inner.slice())]);
   }
 
@@ -467,6 +470,22 @@ class Canvas {
   	});
   }
 
+  saveInLocal(){
+    /*let a = this.frames.map(frame=> [frame[0].src,frame[1]]);
+    let f =  JSON.stringify(a);*/
+    let d = {
+      'colors': window.colors,
+      'currColor': this.color,
+      'width': this.width,
+      'height': this.height,
+      'url': this.canvas.toDataURL(),
+      'steps': this.steps,
+      'redo_arr': this.redo_arr,
+      'dim': window.dim,
+    }
+    localStorage.setItem('pc-canvas-data', JSON.stringify(d));
+  }
+
   addImage() {
     var _this = this;
     var fp = document.createElement("input");
@@ -506,6 +525,7 @@ class Canvas {
 class Popup {
   constructor(s) {
     this.s = s;
+    document.querySelector(this.s).style.display = "block";
     document.querySelector(this.s).style.transform = "translate(-50%,-50%) scale(1,1)";
   }
   close() {
@@ -541,29 +561,54 @@ class Frames {
 }
 
 window.onload = function () {
-  window.dim = new Popup("#popup");
-  window.colors = [
-    [0, 0, 0, 255],
-    [127, 127, 127, 255],
-    [136, 0, 21, 255],
-    [237, 28, 36, 255],
-    [255, 127, 39, 255],
-    [255, 242, 0, 255],
-    [34, 177, 36, 255],
-    [0, 162, 232, 255],
-    [63, 72, 204, 255],
-    [163, 73, 164, 255],
-    [255, 255, 255, 255],
-    [195, 195, 195, 255],
-    [185, 122, 87, 255],
-    [255, 174, 201, 255],
-    [255, 201, 14, 255],
-    [239, 228, 176, 255],
-    [181, 230, 29, 255],
-    [153, 217, 234, 255],
-    [112, 146, 190, 255],
-    [200, 191, 231, 255]
-  ];
+  let canvasData = localStorage.getItem('pc-canvas-data');
+  if(canvasData){
+    data = JSON.parse(canvasData);
+    console.log(data);
+    window.colors = data.colors;
+    window.board = new Canvas(data.width, data.height);
+    let img = new Image();
+    img.setAttribute('src', data.url);
+    img.addEventListener("load", function () {
+        window.board.ctx.drawImage(img, 0, 0);
+    });
+    /*
+    window.board.frames = JSON.parse(data.frames).map(frame=>{
+      let img = new Image();
+      img.src = frame[0]
+      return [img, frame[1]]
+    });
+    
+    for(let f in data.frames){
+      let c = document.createElement('canvas');
+      c.width = data.width;
+      c.height = data.height;
+      let c_ctx = c.getContext('2d');
+      c_ctx.drawImage(f[0], 0, 0);
+      window.board.addFrame(c.toDataURL());
+    }
+   */ 
+    
+    window.board.steps = data.steps;
+    window.board.redo_arr = data.redo_arr;
+    window.board.setcolor(data.currColor);
+    window.gif = new GIF({
+      workers: 2,
+      quality: 10,
+      width: 10 * window.board.width,
+      height: 10 * window.board.height
+    });
+    window.gif.on('finished', function (blob) {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.download = 'canvas.gif';
+      link.href = url;
+      link.click();
+    });
+  }
+  else {
+    newProject();
+  }
   document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
 
   document.querySelector("#palette").addEventListener("contextmenu",e=>e.preventDefault());
@@ -594,6 +639,33 @@ document.querySelector(".menubtn").onclick = function () {
   document.querySelector(".menu").style.display = document.querySelector(".menu").style.display != "block" ? "block" : "none";
 }
 
+function newProject(){
+  document.querySelector(".menu").style.display = "none";
+  localStorage.removeItem('pc-canvas-data');
+  window.dim = new Popup("#popup");
+  window.colors = [
+    [0, 0, 0, 255],
+    [127, 127, 127, 255],
+    [136, 0, 21, 255],
+    [237, 28, 36, 255],
+    [255, 127, 39, 255],
+    [255, 242, 0, 255],
+    [34, 177, 36, 255],
+    [0, 162, 232, 255],
+    [63, 72, 204, 255],
+    [163, 73, 164, 255],
+    [255, 255, 255, 255],
+    [195, 195, 195, 255],
+    [185, 122, 87, 255],
+    [255, 174, 201, 255],
+    [255, 201, 14, 255],
+    [239, 228, 176, 255],
+    [181, 230, 29, 255],
+    [153, 217, 234, 255],
+    [112, 146, 190, 255],
+    [200, 191, 231, 255]
+  ];
+}
 function filler(x, y, cc) {
   if (x >= 0 && x < board.width && y >= 0 && y < board.height) {
     if (JSON.stringify(board.data[x][y]) == JSON.stringify(cc) && JSON.stringify(board.data[x][y]) != JSON.stringify(board.color)) {
@@ -612,6 +684,7 @@ function act(clr) {
 }
 
 window.onbeforeunload = function () {
+  board.saveInLocal();
   return "Data will be lost if you leave the page, are you sure?";
 };	
 
