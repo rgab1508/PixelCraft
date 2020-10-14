@@ -142,7 +142,14 @@ You can also set color Transparency to create translucent colors and create colo
 
 This Web App is a Fully Compatible PWA and is installable.  
 
+![PWA Support](https://user-images.githubusercontent.com/17960677/96029402-3ef46300-0e78-11eb-8a54-d54b6dff458a.png)
+
 You can install it either from the Dropdown or using the "Add to Home Screen" Button From Options.  
 
 ## Some Pixel Arts Made with PixelCraft
 
+![canvas (1)](https://user-images.githubusercontent.com/17960677/96029683-a14d6380-0e78-11eb-8901-bff832a4cb6e.gif)
+![canvas (2)](https://user-images.githubusercontent.com/17960677/96029686-a3afbd80-0e78-11eb-8c03-0f407a5110fd.gif)
+![canvas](https://user-images.githubusercontent.com/17960677/96029693-a4e0ea80-0e78-11eb-9528-1b303a89599e.gif)
+![canvas (29)](https://user-images.githubusercontent.com/17960677/96029696-a5798100-0e78-11eb-8653-43ebc672f1d6.gif)
+![canvas (9)](https://user-images.githubusercontent.com/17960677/96029700-a7434480-0e78-11eb-8505-3b6539bc39d2.gif)
