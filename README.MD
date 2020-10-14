@@ -80,7 +80,26 @@ This tool adds the current state of canvas to the Frame Stack which can be later
 
 This tool displays a Popup with all the current frames in the Frame stack.  
 
-*Load A Frame*: Click on the Frame. 
-*Delete A Frame*: Right Click / Long press on mobile, To delete a Frame. 
+**Load A Frame**: Click on the Frame. 
+**Delete A Frame**: Right Click / Long press on mobile, To delete a Frame. 
 
 ![Frame Panel](https://user-images.githubusercontent.com/17960677/96025802-48c79780-0e73-11eb-8ca1-4948226804ad.png)
+
+## Utility Tools
+
+# Undo/Redo
+
+The Undo/Redo Functionality is not very advanced and is only capable of undoing/redoing 1 pixel at a time.  
+It is only useful for correcting small mistakes, hence, it is advised to draw with care, or, add a frame if doing a big change with chances of mistake.
+
+![Undo/Redo Tool](https://user-images.githubusercontent.com/17960677/96026461-23875900-0e74-11eb-8682-479b33894a4f.png)
+![Undo/Redo Tool](https://user-images.githubusercontent.com/17960677/96026481-2bdf9400-0e74-11eb-8e4c-4c64508ae011.png)
+
+# Clear Window
+
+This Tool is used to clear the current Canvas window.
+
+Before:  
+![Clear Window](https://user-images.githubusercontent.com/17960677/96026664-73662000-0e74-11eb-8111-c46f54375056.png)
+After:  
+![Claer Window](https://user-images.githubusercontent.com/17960677/96026681-7a8d2e00-0e74-11eb-9984-c267fb0290c9.png)
