@@ -21,7 +21,7 @@ Dimensions below *128 X 128* are preferable for smooth operation and GIF creatio
 
 ![PixelCraft overview](images/toolbar.png)
 
-The List Of all Tools and methods to use them are as follows
+The List Of all Tools and methods to use them are as follows.
 
 ### Pencil
 
@@ -120,7 +120,7 @@ Once you are done with making your pixel art or animation frames you can export 
 
 ### Saving Image
 
-Save Image option is available in the Drop-down on top left corner, It will download a file named *canvas.png* with dimensions *10 x width X 10 x Height*
+Save Image option is available in the Drop-down on top left corner, It will download a file named *canvas.png* with dimensions *10 x width X 10 x Height*.
 
 ### Saving GIF
 
