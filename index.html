@@ -382,7 +382,14 @@ class Canvas {
         var rect = this.canvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
-        this.draw(Math.floor(this.width * x / this.canvas.clientWidth), Math.floor(this.height * y / this.canvas.clientHeight))
+        x = Math.floor(this.width * x / this.canvas.clientWidth);
+        y = Math.floor(this.height * y / this.canvas.clientHeight);
+        if(tools[Tool.pen]){
+          this.draw(x, y)
+        }
+        else if(tools[Tool.eraser]){
+          this.erase(x, y);
+        }
       }
     });
 
@@ -390,7 +397,14 @@ class Canvas {
       var rect = this.canvas.getBoundingClientRect();
       var x = e.touches[0].clientX - rect.left;
       var y = e.touches[0].clientY - rect.top;
-      this.draw(Math.floor(this.width * x / this.canvas.clientWidth), Math.floor(this.height * y / this.canvas.clientHeight))
+      x = Math.floor(this.width * x / this.canvas.clientWidth);
+      y = Math.floor(this.height * y / this.canvas.clientHeight);
+      if(tools[Tool.pen]){
+        this.draw(x, y);
+      }
+      else if(tools[Tool.eraser]){
+        this.erase(x, y);
+      }
     })
 
     this.canvas.addEventListener("mousedown", e => {
@@ -406,6 +420,14 @@ class Canvas {
     	this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
     	if (!count && JSON.stringify(this.steps[this.steps.length-1])!==JSON.stringify([x,y,this.color,this.ctx.globalAlpha])) this.steps.push([x,y,this.color,this.ctx.globalAlpha]);
 	}
+  }
+  erase(x, y){
+    var temp = this.color;
+    var tga = this.ctx.globalAlpha;
+    this.setcolor([255, 255, 255, 255]);
+    this.draw(x, y);
+    this.setcolor(temp);
+    this.ctx.globalAlpha = tga;
   }
   setcolor(color) {
   	this.ctx.globalAlpha = 1;
