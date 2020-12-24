@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="A pixel Art & Animation Creation Tool Built using HTML5 Canvas. It is a Progressive Web App (PWA) with offline compatibility. It is mobile-friendly and is very easy to use." />
 <meta name="twitter:title" content="PixelCraft: A Pixel Art Editor" />
 <meta name="twitter:image" content="https://rgab1508.github.io/PixelCraft/images/overview.png" />
-<link rel="shortcut icon" type="image/png" href="/icons/logo.png"/>
+<link rel="shortcut icon" type="image/png" href="icons/logo.png"/>
 <link rel="manifest" href="manifest.json">
 <script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
 <script src="lib/Matrix.js" async></script>
@@ -231,6 +231,15 @@ path {
   cursor: pointer;
 }
 
+.menu li i {
+  padding-right: 10px;
+}
+
+.menu li a {
+  text-decoration: none;
+  color: white;
+}
+
 @media only screen and (max-width: 600px) {
   #toolbar {
     position: fixed;
@@ -272,6 +281,7 @@ path {
       <li onclick="board.save()">Save image</li>
       <li onclick="board.renderGIF()">Save GIF</li>
       <li onclick="install()">Install PWA</li>
+      <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li>
     </ul>
     <div id="popup">
       <h3>Select the Dimensions Of the grid</h3>
