@@ -278,8 +278,8 @@ path {
     <div class="menubtn">☰</div>
     <ul class="menu">
       <li onclick="newProject()">New</li>
-      <li onclick="board.save()">Save image</li>
-      <li onclick="board.renderGIF()">Save GIF</li>
+      <li onclick="saveCurrentBoard()">Save image</li>
+      <li onclick="saveGifBoard()">Save GIF</li>
       <li onclick="install()">Install PWA</li>
       <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li>
     </ul>
@@ -703,6 +703,18 @@ document.querySelector("#close").onclick = function () {
 
 document.querySelector(".menubtn").onclick = function () {
   document.querySelector(".menu").style.display = document.querySelector(".menu").style.display != "block" ? "block" : "none";
+}
+
+function saveCurrentBoard() {
+  if (typeof board !== 'undefined') {
+    board.save()
+  }
+}
+
+function saveGifBoard() {
+  if (typeof board !== 'undefined') {
+    board.renderGIF()
+  }
 }
 
 function newProject(){
