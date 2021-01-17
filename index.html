@@ -312,6 +312,44 @@ path {
     <div id="palette"></div>
 </body>
 <script type="text/javascript">
+
+// override of finishRendering of gif.js
+GIF.prototype.finishRendering = function() {
+  var data, frame, i, image, j, k, l, len, len1, len2, len3, offset, page, ref, ref1, ref2;
+  len = 0;
+  ref = this.imageParts;
+  for (j = 0,
+  len1 = ref.length; j < len1; j++) {
+      frame = ref[j];
+      len += (frame.data.length - 1) * frame.pageSize + frame.cursor
+  }
+  len += frame.pageSize - frame.cursor;
+  this.log("rendering finished - filesize " + Math.round(len / 1e3) + "kb");
+  data = new Uint8Array(len);
+  offset = 0;
+  ref1 = this.imageParts;
+  for (k = 0,
+  len2 = ref1.length; k < len2; k++) {
+      frame = ref1[k];
+      ref2 = frame.data;
+      for (i = l = 0,
+      len3 = ref2.length; l < len3; i = ++l) {
+          page = ref2[i];
+          data.set(page, offset);
+          if (i === frame.data.length - 1) {
+              offset += frame.cursor
+          } else {
+              offset += frame.pageSize
+          }
+      }
+  }
+  image = new Blob([data],{
+      type: "image/gif"
+  });
+  this.running = false; // *this is the new part*
+  return this.emit("finished", image, data)
+};
+
 var Tool = {
   "pen": 0,
   "eraser": 1,
@@ -498,13 +536,18 @@ class Canvas {
   }
 
   renderGIF() {
-  	this.frames.forEach(frame => {
-  		gif.addFrame(frame[0], {
-      		copy: true,
-      		delay: 100
-    	});
-  	});
-  	gif.render();
+  	if (this.frames == 0) {
+      alert('You must add frames before saving as a GIF');
+    }
+    else {
+      this.frames.forEach(frame => {
+        gif.addFrame(frame[0], {
+            copy: true,
+            delay: 100
+        });
+      });
+      gif.render();
+    }
   }
 
   undo() {
