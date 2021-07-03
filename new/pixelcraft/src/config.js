@@ -1,4 +1,6 @@
-const colors = [
+import { FaPencilAlt, FaEraser, FaFill, FaSlash, FaRegCircle, FaPlus, FaUndo, FaRedo, FaTrashAlt } from "react-icons/fa";
+
+export var colors = [
   [0, 0, 0, 255],
   [127, 127, 127, 255],
   [136, 0, 21, 255],
@@ -21,17 +23,45 @@ const colors = [
   [200, 191, 231, 255],
 ];
 
-const tools = {
-  pen: 0,
-  eraser: 1,
-  fillBucket: 2,
-  line: 3,
-  circle: 4,
-  ellipse: 5,
-  addFrame: 6,
-  undo: 7,
-  redo: 8,
-  clearCanvas: 9,
-};
-
-export default { colors, tools };
+export var tools = [
+  {
+    name: "Pen",
+    icon: FaPencilAlt
+  },
+  {
+    name: "Eraser",
+    icon: FaEraser
+  },
+  {
+    name: "Fill",
+    icon: FaFill
+  },
+  {
+    name: "Line",
+    icon: FaSlash
+  },
+  {
+    name: "Circle",
+    icon: FaRegCircle
+  },
+  {
+    name: "Ellipse",
+    icon: FaRegCircle
+  },
+  {
+    name: "Add Frame",
+    icon: FaPlus
+  },
+  {
+    name: "Undo",
+    icon: FaUndo
+  },
+  {
+    name: "Redo",
+    icon: FaRedo
+  },
+  {
+    name: "Clear Canvas",
+    icon: FaTrashAlt
+  }
+]

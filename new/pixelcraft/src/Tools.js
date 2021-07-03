@@ -1,17 +1,27 @@
-import { Flex } from "@chakra-ui/react";
-import colors from "./config";
+import { Flex, IconButton } from "@chakra-ui/react";
+import { tools } from "./config";
 
-const Tools = ({}) => {
+const Tools = ({ mode, setMode }) => {
   return (
-    <Flex wrap="wrap" w={{ base: "100%", sm: "70px", md: "100px" }}>
-      {colors.map((color, i) => (
+    <Flex wrap="wrap" w={{ base: "100%", sm: "100px", md: "150px" }}>
+      {tools.map((tool, i) => (
         <Flex
           justifyContent="center"
+          align="center"
           flexBasis={{ base: "10%", sm: "50%" }}
           boxSizing="border-box"
-          paddingTop={{ base: "10%", sm: "35px", md: "50px" }}
-          bgColor={"rgb(" + color[0] + "," + color[1] + "," + color[2] + ")"}
+          p={4}
+          bgColor={mode == i && "gray.300"}
+          cursor="pointer"
+          onClick={() => setMode(i)}
         >
+          <IconButton
+            as={tool.icon}
+            variant="unstyled"
+            w={7}
+            h={7}
+            transform={tool.name == "Ellipse" && "rotateX(45deg)"}
+          />
         </Flex>
       ))}
     </Flex>

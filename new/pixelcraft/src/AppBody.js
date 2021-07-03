@@ -11,7 +11,6 @@ const AppBody = ({ children }) => {
       direction={{ base: "column-reverse", sm: "row" }}
       justifyContent="space-between"
       bgColor={ colorMode == "light" ? "gray.100" : "gray.800"}
-      onClick={toggleColorMode}
     >
       {children}
     </Flex>

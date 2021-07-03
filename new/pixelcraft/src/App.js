@@ -20,7 +20,10 @@ const App = ({}) => {
   }, []);
 
   function handleClick(e) {
-    console.log(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
+    console.log(
+      e.clientX - e.target.offsetLeft,
+      e.clientY - e.target.offsetTop
+    );
     return;
   }
 
@@ -30,7 +33,7 @@ const App = ({}) => {
 
   return (
     <AppBody>
-      <Tools />
+      <Tools mode={mode} setMode={setMode} />
       <Board
         height={size.width}
         width={size.height}

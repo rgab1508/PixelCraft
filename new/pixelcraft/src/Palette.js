@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import colors from "./config";
+import { colors } from "./config";
 
 const Palette = ({}) => {
   return (
