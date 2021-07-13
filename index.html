@@ -278,14 +278,14 @@ path {
     <div class="menubtn">☰</div>
     <ul class="menu">
       <li onclick="newProject()">New</li>
-      <li onclick="board.save()">Save image</li>
-      <li onclick="board.renderGIF()">Save GIF</li>
+      <li onclick="saveCurrentBoard()">Save image</li>
+      <li onclick="saveGifBoard()">Save GIF</li>
       <li onclick="install()">Install PWA</li>
       <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li>
     </ul>
     <div id="popup">
       <h3>Select the Dimensions Of the grid</h3>
-      <input type="text" id="width" value="16">X<input type="text" id="height" value="16">
+      <input type="number" id="width" value="16" min="1">X<input type="number" id="height" value="16" min="1">
       <button id="close">OK</button>
     </div>
     <div id="frames" onblur="Frames.close()" tabindex="0">
@@ -371,16 +371,20 @@ class Canvas {
       } else if (tools[Tool.circle]) {
         var centre = new Point(x, y);
         var radius = +prompt("radius?");
-        var lp = circle(radius, centre);
-        var p;
-        for (p of lp) this.draw(p.x, p.y);
+        if (radius > 0 && Number.isInteger(radius)) {
+          var lp = circle(radius, centre);
+          var p;
+          for (p of lp) this.draw(p.x, p.y);
+        }
       } else if (tools[Tool.ellipse]) {
         var center = new Point(x, y);
         var radiusX = +prompt("X radius?");
         var radiusY = +prompt("Y radius?");
-        var lp = ellipse(radiusX, radiusY, center);
-        for (p of lp)
-          this.draw(p.x, p.y);
+        if (radiusX > 0 && radiusY > 0 && Number.isInteger(radiusX) && Number.isInteger(radiusY)) {
+          var lp = ellipse(radiusX, radiusY, center);
+          for (p of lp)
+            this.draw(p.x, p.y);
+        }
       } else {
         this.draw(x, y);
       }
@@ -503,7 +507,8 @@ class Canvas {
       		copy: true,
       		delay: 100
     	});
-  	});
+    });
+    gif.abort()
   	gif.render();
   }
 
@@ -593,25 +598,27 @@ class Popup {
 
 class Frames {
   static open() {
-  	document.querySelector("#frames").style.display = "block";
-    document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
-    document.querySelector("#frames").focus();
-    document.querySelector("#frames #gallery").innerHTML="";
-    for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame[0]);
-    document.querySelectorAll("#frames #gallery img").forEach((x,i) => {
-    	x.onclick = (e) => {
-    		board.loadFrame(i);
-    		Frames.close();
-    	};
-    	x.oncontextmenu = (e) => {
-    		e.preventDefault();
-    		var del_confirmation = confirm("Delete?");
-    		if (del_confirmation) {
-    			board.deleteFrame(i);
-    			Frames.open();
-    		}
-    	};
-    });
+    if (typeof board !== 'undefined') {
+      document.querySelector("#frames").style.display = "block";
+      document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
+      document.querySelector("#frames").focus();
+      document.querySelector("#frames #gallery").innerHTML="";
+      for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame[0]);
+      document.querySelectorAll("#frames #gallery img").forEach((x,i) => {
+        x.onclick = (e) => {
+          board.loadFrame(i);
+          Frames.close();
+        };
+        x.oncontextmenu = (e) => {
+          e.preventDefault();
+          var del_confirmation = confirm("Delete?");
+          if (del_confirmation) {
+            board.deleteFrame(i);
+            Frames.open();
+          }
+        };
+      });
+    }
   }
   static close() {
     document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(0,0)";
@@ -675,15 +682,17 @@ window.onload = function () {
 document.querySelector("#close").onclick = function () {
   var width = +document.querySelector("#width").value;
   var height = +document.querySelector("#height").value;
-  window.board = new Canvas(width, height);
-  window.board.setcolor([0, 0, 0, 255]);
-  window.dim.close();
-  window.gif = new GIF({
-    workers: 2,
-    quality: 10,
-    width: 10 * window.board.width,
-    height: 10 * window.board.height
-  });
+  if (width > 0 && height > 0 && Number.isInteger(width) && Number.isInteger(height)) {
+    window.board = new Canvas(width, height);
+    window.board.setcolor([0, 0, 0, 255]);
+    window.dim.close();
+    window.gif = new GIF({
+      workers: 2,
+      quality: 10,
+      width: 10 * window.board.width,
+      height: 10 * window.board.height
+    });
+  }
   window.gif.on('finished', function (blob) {
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
@@ -695,6 +704,18 @@ document.querySelector("#close").onclick = function () {
 
 document.querySelector(".menubtn").onclick = function () {
   document.querySelector(".menu").style.display = document.querySelector(".menu").style.display != "block" ? "block" : "none";
+}
+
+function saveCurrentBoard() {
+  if (typeof board !== 'undefined') {
+    board.save()
+  }
+}
+
+function saveGifBoard() {
+  if (typeof board !== 'undefined') {
+    board.renderGIF()
+  }
 }
 
 function newProject(){
@@ -769,7 +790,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function install() {
-  msg.prompt();
+  //msg.prompt();
 }
 
 window.onerror = function (errorMsg, url, lineNumber) {
