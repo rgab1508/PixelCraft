@@ -624,7 +624,10 @@ window.onload = function () {
     data = JSON.parse(canvasData);
     console.log(data);
     window.colors = data.colors;
-    window.board = new Canvas(data.width, data.height);
+    if(window.board == undefined){
+      window.board = new Canvas(data.width, data.height);
+    }
+    
     let img = new Image();
     img.setAttribute('src', data.url);
     img.addEventListener("load", function () {
@@ -675,7 +678,26 @@ window.onload = function () {
 document.querySelector("#close").onclick = function () {
   var width = +document.querySelector("#width").value;
   var height = +document.querySelector("#height").value;
-  window.board = new Canvas(width, height);
+  if(window.board == undefined){
+    window.board = new Canvas(width, height);
+  }
+  window.board.canvas.width = 10 * width;//display each pixel in 10 by 10pxs
+  window.board.canvas.height = 10 * height;
+  window.board.width = width;//Dimentions of x pixels
+  window.board.height = height;//Dimentions of Y pixels
+  window.board.canvas.style.display = "block";
+  window.board.canvas.style.height = Math.floor((height / width) * window.board.canvas.clientWidth) + "px";
+  window.board.w = +window.board.canvas.width;
+  window.board.h = +window.board.canvas.height;
+  window.board.ctx = window.board.canvas.getContext("2d");
+  window.board.ctx.fillStyle = "white";
+  window.board.ctx.globalAlpha = 1;
+  window.board.ctx.fillRect(0, 0, window.board.w, window.board.h);
+  window.board.data = [...Array(window.board.width)].map(e => Array(window.board.height).fill([255, 255, 255, 255]));
+  window.board.steps = [];
+  window.board.redo_arr = [];
+  window.board.frames = [];
+
   window.board.setcolor([0, 0, 0, 255]);
   window.dim.close();
   window.gif = new GIF({
