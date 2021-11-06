@@ -345,7 +345,60 @@ class Canvas {
     this.steps = [];
     this.redo_arr = [];
     this.frames = [];
-    this.canvas.addEventListener("click", e => {
+    
+    this.previous_point = new Point(undefined,undefined)
+    // Moved on-click to on-mouse-up to tell the difference
+    //  between a click and a mouse-drag + click
+
+    this.canvas.addEventListener("mousemove", e => {
+      if (this.active) {
+        var rect = this.canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        x = Math.floor(this.width * x / this.canvas.clientWidth);
+        y = Math.floor(this.height * y / this.canvas.clientHeight);
+        if(tools[Tool.pen]){
+          var p = new Point(x,y);
+          if (! p.equals(this.previous_point)) {
+            this.previous_point = p;
+            this.draw(p.x,p.y);
+          }
+        }
+        else if(tools[Tool.eraser]){
+          this.erase(x, y);
+        }
+      }
+    });
+
+    this.canvas.addEventListener("touchmove", e => {
+      var rect = this.canvas.getBoundingClientRect();
+      var x = e.touches[0].clientX - rect.left;
+      var y = e.touches[0].clientY - rect.top;
+      x = Math.floor(this.width * x / this.canvas.clientWidth);
+      y = Math.floor(this.height * y / this.canvas.clientHeight);
+      if(tools[Tool.pen]){
+        var p = new Point(x,y);
+        if (! p.equals(this.previous_point)) {
+          this.previous_point = p;
+          this.draw(p.x,p.y);
+        }
+      }
+      else if(tools[Tool.eraser]){
+        this.erase(x, y);
+      }
+    })
+
+    this.canvas.addEventListener("mousedown", e => {
+      this.previous_point = new Point(undefined,undefined)
+      this.active = true;
+      console.log("Active")
+    });
+    this.canvas.addEventListener("mouseup", e => {
+      this.active = false
+      if (this.previous_point.x !== undefined) {
+        return; // Don't re-paint the last point in a streak
+      }
+
       var rect = this.canvas.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
@@ -382,46 +435,9 @@ class Canvas {
         for (p of lp)
           this.draw(p.x, p.y);
       } else {
+        this.previous_point = new Point(x,y);
         this.draw(x, y);
       }
-
-    });
-
-    this.canvas.addEventListener("mousemove", e => {
-      if (this.active) {
-        var rect = this.canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        x = Math.floor(this.width * x / this.canvas.clientWidth);
-        y = Math.floor(this.height * y / this.canvas.clientHeight);
-        if(tools[Tool.pen]){
-          this.draw(x, y)
-        }
-        else if(tools[Tool.eraser]){
-          this.erase(x, y);
-        }
-      }
-    });
-
-    this.canvas.addEventListener("touchmove", e => {
-      var rect = this.canvas.getBoundingClientRect();
-      var x = e.touches[0].clientX - rect.left;
-      var y = e.touches[0].clientY - rect.top;
-      x = Math.floor(this.width * x / this.canvas.clientWidth);
-      y = Math.floor(this.height * y / this.canvas.clientHeight);
-      if(tools[Tool.pen]){
-        this.draw(x, y);
-      }
-      else if(tools[Tool.eraser]){
-        this.erase(x, y);
-      }
-    })
-
-    this.canvas.addEventListener("mousedown", e => {
-      this.active = true;
-    });
-    this.canvas.addEventListener("mouseup", e => {
-      this.active = false;
     });
   }
   draw(x, y, count) {
