@@ -194,6 +194,10 @@ path {
   fill: white;
 }
 
+.display-none {
+  display: none;
+}
+
 .item:hover {
   background-color: grey;
 }
@@ -280,7 +284,7 @@ path {
       <li onclick="newProject()">New</li>
       <li onclick="board.save()">Save image</li>
       <li onclick="board.renderGIF()">Save GIF</li>
-      <li onclick="install()">Install PWA</li>
+      <li id="install-pwa-btn" class="display-none" onclick="install()">Install PWA</li>
       <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li>
     </ul>
     <div id="popup">
@@ -804,10 +808,18 @@ var msg;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   msg = e;
+  // Shows the install button only when the app is installable
+  document.querySelector("#install-pwa-btn").classList.remove("display-none");
 });
 
 function install() {
   msg.prompt();
+  msg.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      // Hides the install button
+      document.querySelector("#install-pwa-btn").classList.add("display-none");
+    }
+  });
 }
 
 window.onerror = function (errorMsg, url, lineNumber) {
