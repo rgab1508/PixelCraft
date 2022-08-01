@@ -7,8 +7,10 @@ It is mobile-friendly and is very easy to use.
 
 ## Overview
 This App is Available at both these locations
-https://pixelcraft.web.app/
+
 https://rgab1508.github.io/PixelCraft
+
+https://pixelcraft.web.app
 
 On opening, you will get a screen as Follows
 
@@ -126,6 +128,8 @@ Save Image option is available in the Drop-down on top left corner, It will down
 
 After making all the frames and making necessary changes in Frames Panel, you can export the GIF using option present in Dropdown. The dimensions will be same as that of image.
 
+Thanks to [@eagleloid](https://github.com/eagleloid) for this fix [#44](https://github.com/rgab1508/PixelCraft/pull/44)
+
 ## Color Palette & Transparency
 
 The Following colors are available on the color Palette.
@@ -135,6 +139,9 @@ The Following colors are available on the color Palette.
 You can select any color by clicking on it.  
 
 You can also set color Transparency to create translucent colors and create color combinations. This property can be used to create complex patterns with greater flexibility.
+**Right click on color to set transparency value between 0 and 1**
+
+Thanks to [@mrfoogles](https://github.com/mrfoogles) for this fix [#41](https://github.com/rgab1508/PixelCraft/pull/41)
 
 ![Complex Pattern](https://user-images.githubusercontent.com/17960677/96028936-95ad6d00-0e77-11eb-8a8c-07caa0f2a8b5.jpg)
 
@@ -148,8 +155,4 @@ You can install it either from the Dropdown or using the "Add to Home Screen" Bu
 
 ## Some Pixel Arts Made with PixelCraft
 
-![canvas (1)](https://user-images.githubusercontent.com/17960677/96029683-a14d6380-0e78-11eb-8901-bff832a4cb6e.gif)
-![canvas (2)](https://user-images.githubusercontent.com/17960677/96029686-a3afbd80-0e78-11eb-8c03-0f407a5110fd.gif)
-![canvas](https://user-images.githubusercontent.com/17960677/96029693-a4e0ea80-0e78-11eb-9528-1b303a89599e.gif)
-![canvas (29)](https://user-images.githubusercontent.com/17960677/96029696-a5798100-0e78-11eb-8653-43ebc672f1d6.gif)
-![canvas (9)](https://user-images.githubusercontent.com/17960677/96029700-a7434480-0e78-11eb-8505-3b6539bc39d2.gif)
+<img src="https://user-images.githubusercontent.com/17960677/96029683-a14d6380-0e78-11eb-8901-bff832a4cb6e.gif" alt="canvas (1)" width="250" height="250" ><img src="https://user-images.githubusercontent.com/17960677/96029686-a3afbd80-0e78-11eb-8c03-0f407a5110fd.gif" alt="canvas (2)" width="250" height="250"><img src="https://user-images.githubusercontent.com/17960677/96029693-a4e0ea80-0e78-11eb-9528-1b303a89599e.gif" alt="canvas" width="250" height="250"><img src="https://user-images.githubusercontent.com/17960677/96029696-a5798100-0e78-11eb-8653-43ebc672f1d6.gif" alt="canvas (29)" width="250" height="250"><img src="https://user-images.githubusercontent.com/17960677/96029700-a7434480-0e78-11eb-8505-3b6539bc39d2.gif" alt="canvas (9)" width="250" height="250">
