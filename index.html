@@ -595,8 +595,9 @@ function filler(x, y, cc) {
 }
 
 function act(clr) {
-  document.querySelectorAll("#palette .item").forEach(x => x.style.boxShadow = "");
+  document.querySelectorAll("#palette .item").forEach(x => {x.style.boxShadow = ""; x.style.border = "";});
   clr.style.boxShadow = "10px 10px 10px 10px rgba(0,0,0,0.5)";
+  clr.style.border = `1px white solid`;
 }
 
 // window.onbeforeunload = function () {

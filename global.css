@@ -235,11 +235,19 @@ path {
   #palette {
     position: fixed;
     top: 0%;
-    transform: translateY(0%);
+    /* transform: translateY(0%); */
     min-width: 100%;
-    padding: 0px;
     color: white;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, 30px);
   }
+
+  #palette .item {
+    padding: 15px
+  }
+
+
   #toolbar .item {
     width: 20px;
     height: 20px;
