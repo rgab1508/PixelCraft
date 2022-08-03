@@ -600,10 +600,10 @@ function act(clr) {
   clr.style.border = `1px white solid`;
 }
 
-// window.onbeforeunload = function () {
-//   board.saveInLocal();
-//   return "Data will be lost if you leave the page, are you sure?";
-// };	
+window.onbeforeunload = function () {
+  board.saveInLocal();
+  return "Data will be lost if you leave the page, are you sure?";
+};	
 
 var scope = {
   scope: './'
