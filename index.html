@@ -24,259 +24,14 @@
 <meta name="twitter:title" content="PixelCraft: A Pixel Art Editor" />
 <meta name="twitter:image" content="https://rgab1508.github.io/PixelCraft/images/overview.png" />
 <link rel="shortcut icon" type="image/png" href="icons/logo.png"/>
+<link rel="stylesheet" type="text/css" href="/global.css" />
 <link rel="manifest" href="manifest.json">
 <script src="https://kit.fontawesome.com/473e8f3a80.js" crossorigin="anonymous"></script>
 <script src="lib/Matrix.js" async></script>
 <script src="lib/Shapes.js" async></script>
 <script src="lib/Transformation.js" async></script>
 <script src="lib/gif.js"></script>
-<style>
-@font-face {
-  font-family: 'Martel Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Martel Sans Regular'), local('MartelSans-Regular'), url(https://fonts.gstatic.com/s/martelsans/v6/h0GsssGi7VdzDgKjM-4d8hjYx-4.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
 
-* {
-  font-family: 'Martel Sans', sans-serif;
-}
-
-body {
-  background-color: #232125;
-  margin: 0px;
-}
-
-#popup, #frames {
-  background-color: #332f35;
-  color: white;
-  font-size: 20px;
-  padding: 30px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.1, 0.1);
-  text-align: center;
-  max-width: 420px;
-  width: 70%;
-  transition: 0.2s all;
-  z-index: 2;
-  border-radius: 5px;
-}
-#popup {
-  display: none;
-}
-#popup h3 {
-  line-height: 30px;
-}
-
-#frames {
-  display: none;
-  padding: 10px;
-}
-
-#frames #gallery {
-  padding: 10px 10px 10px 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  scroll-behavior: smooth;
-}
-
-#frames .btn {
-  position: absolute;
-  background-color: rgba(255,255,255,0.5);
-  color: black;
-  font-size: 20px;
-  padding: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  z-index: 2;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-}
-
-#frames img {
-  width: 100px;
-  margin: 10px; 
-}
-
-#width,
-#height {
-  background-color: #262327;
-  color: white;
-  margin: 10px;
-  padding: 5px;
-  font-size: 14px;
-  font-weight: bolder;
-  border: none;
-  border-radius: 3px;
-  max-width: 60px;
-}
-
-#close {
-  background-color: #262327;
-  color: white;
-  margin: 15px auto 5px auto;
-  padding: 5px 10px 5px 10px;
-  font-size: 18px;
-  font-weight: bolder;
-  display: block;
-  border: none;
-  border-radius: 3px;
-  max-width: 60px;
-  transition: 0.2s all;
-}
-
-#close:hover {
-  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
-}
-
-#canvas {
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 75%;
-  max-width: 550px;
-  display: none;
-  cursor: crosshair;
-  touch-action: none;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
-#toolbar {
-  position: fixed;
-  top: 50%;
-  left: 0%;
-  transform: translateY(-50%);
-  padding: 0px;
-  color: white;
-  max-width: 150px;
-}
-
-#toolbar .item {
-  display: inline-block;
-  float: left;
-  padding: 15px;
-  border: 1px solid #FFF;
-  cursor: pointer;
-  height: 32px;
-  width: 32px;
-  font-family: Arial, FontAwesome;
-  font-size: 24px;
-}
-
-#palette {
-  position: fixed;
-  top: 50%;
-  right: 0%;
-  transform: translateY(-50%);
-  padding: 0px;
-  color: white;
-  max-width: 100px;
-}
-
-#palette .item {
-  display: inline-block;
-  float: left;
-  padding: 25px;
-  cursor: pointer;
-}
-
-path {
-  fill: white;
-}
-
-.display-none {
-  display: none;
-}
-
-.item:hover {
-  background-color: grey;
-}
-
-.menubtn {
-  position: fixed;
-  left: 20px;
-  top: 20px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  background-color: #332f35;
-  color: white;
-  padding: 5px 15px 5px 15px;
-  border-radius: 5px;
-  font-size: 25px;
-  font-weight: bolder;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.menu {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  border-radius: 5px;
-  padding: 0px;
-  color: white;
-  z-index: 3;
-  display: none;
-}
-
-.menu li {
-  padding: 5px 20px 5px 20px;
-  list-style: none;
-  background-color: #332f35;
-  cursor: pointer;
-}
-
-.menu li i {
-  padding-right: 10px;
-}
-
-.menu li a {
-  text-decoration: none;
-  color: white;
-}
-
-@media only screen and (max-width: 600px) {
-  #toolbar {
-    position: fixed;
-    top: 100%;
-    left: 50%;
-    min-width: 100%;
-    transform: translate(-50%, -100%);
-    padding: 0px;
-    color: white;
-  }
-  #palette {
-    position: fixed;
-    top: 0%;
-    transform: translateY(0%);
-    min-width: 100%;
-    padding: 0px;
-    color: white;
-  }
-  #toolbar .item {
-    width: 20px;
-    height: 20px;
-  }
-  #palette .item {
-    padding: 15px;
-  }
-  .menubtn {
-    top:70px;
-  }
-  .menu {
-    top:110px;
-  }
-}
-</style>
 </head>
 <body>
     <div class="menubtn">&#9776</div>
@@ -313,7 +68,7 @@ path {
       <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
       <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
     </div>
-    <div id="palette"></div>
+    <div id="palette">    </div>
 </body>
 <script type="text/javascript">
 
@@ -435,6 +190,11 @@ class Canvas {
       this.active = true;
       console.log("Active")
     });
+
+    this.canvas.addEventListener("mouseleave", e => {
+      this.active = false;
+    });
+
     this.canvas.addEventListener("mouseup", e => {
       this.active = false
       if (this.previous_point.x !== undefined) {
@@ -482,13 +242,15 @@ class Canvas {
       }
     });
   }
+
   draw(x, y, count) {
   	if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
     	this.data[x][y] = this.color;
     	this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
     	if (!count && JSON.stringify(this.steps[this.steps.length-1])!==JSON.stringify([x,y,this.color,this.ctx.globalAlpha])) this.steps.push([x,y,this.color,this.ctx.globalAlpha]);
-	}
+	  }
   }
+  
   erase(x, y){
     var temp = this.color;
     var tga = this.ctx.globalAlpha;
@@ -497,11 +259,13 @@ class Canvas {
     this.setcolor(temp);
     this.ctx.globalAlpha = tga;
   }
+
   setcolor(color) {
   	this.ctx.globalAlpha = 1;
     this.color = color;
     this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
   }
+
   setmode(i) {
     tools = [false, false, false, false, false, false];
     tools[i] = true;
@@ -510,6 +274,7 @@ class Canvas {
       else x.style.backgroundColor = "";
     })
   }
+
   save() {
     this.canvas.toBlob(function (blob) {
       var url = URL.createObjectURL(blob);
@@ -643,6 +408,8 @@ class Canvas {
     }
   }
 }
+
+
 class Popup {
   constructor(s) {
     this.s = s;
@@ -733,7 +500,13 @@ window.onload = function () {
   else {
     newProject();
   }
-  document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
+
+  let paletteDiv = document.querySelector("#palette");
+  paletteDiv.innerHTML = colors.map(x => 
+    `<div class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></div>`
+  ).join("\n");
+
+  // paletteDiv.innerHTML += '<div class="btn" ><i class="fa fa-upload"></i></div>';
 
   document.querySelector("#palette").addEventListener("contextmenu",e=>e.preventDefault());
 }
@@ -826,10 +599,10 @@ function act(clr) {
   clr.style.boxShadow = "10px 10px 10px 10px rgba(0,0,0,0.5)";
 }
 
-window.onbeforeunload = function () {
-  board.saveInLocal();
-  return "Data will be lost if you leave the page, are you sure?";
-};	
+// window.onbeforeunload = function () {
+//   board.saveInLocal();
+//   return "Data will be lost if you leave the page, are you sure?";
+// };	
 
 var scope = {
   scope: './'
