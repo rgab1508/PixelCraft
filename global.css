@@ -54,7 +54,7 @@ body {
   top: 50%;
 }
 
-#color-settings-popup .color-palette { 
+#color-settings-popup .color-palette {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(10, 43px);
@@ -72,7 +72,6 @@ body {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;
-
 }
 
 #color-settings-popup .close i {
@@ -212,7 +211,6 @@ body {
   color: white;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
 }
 
 #palette .item {
@@ -222,8 +220,8 @@ body {
 }
 
 #palette .btn {
-    padding: 10px;
-    cursor: pointer;
+  padding: 10px;
+  cursor: pointer;
 }
 
 path {
@@ -302,7 +300,7 @@ path {
   }
 
   #palette .item {
-    padding: 15px
+    padding: 15px;
   }
 
   #toolbar .item {
