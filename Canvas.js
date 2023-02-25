@@ -232,7 +232,11 @@ class Canvas {
 
   undo() {
     this.clear();
-    this.redo_arr.push(this.steps.pop());
+    const lastRemovedItem = this.steps.pop();
+
+    if (!lastRemovedItem) return;
+
+    this.redo_arr.push(lastRemovedItem);
     var step;
     this.steps.forEach((step) => {
       this.setcolor(step[2]);
@@ -240,9 +244,13 @@ class Canvas {
       this.draw(step[0], step[1], true);
     });
   }
-
+  
   redo() {
-    this.steps.push(this.redo_arr.pop());
+    const lastRemovedItem = this.redo_arr.pop();
+
+    if (!lastRemovedItem) return;
+
+    this.steps.push(lastRemovedItem);
     var step;
     this.steps.forEach((step) => {
       this.setcolor(step[2]);
