@@ -57,7 +57,7 @@ body {
 #color-settings-popup .color-palette {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(10, 43px);
+  grid-template-columns: repeat(10, 10%);
 }
 
 #color-settings-popup .button-grp {
@@ -89,6 +89,10 @@ body {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+}
+
+#color-settings-popup .button-grp button:hover {
+  background-color: grey;
 }
 
 .color-palette .item {
@@ -148,6 +152,7 @@ body {
 #close {
   background-color: #262327;
   color: white;
+  cursor: pointer;
   margin: 15px auto 5px auto;
   padding: 5px 10px 5px 10px;
   font-size: 18px;
@@ -191,7 +196,9 @@ body {
 }
 
 #toolbar .item {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   float: left;
   padding: 15px;
   border: 1px solid #fff;
@@ -200,13 +207,14 @@ body {
   width: 32px;
   font-family: Arial, FontAwesome;
   font-size: 24px;
+  text-align: center;
 }
 
 #palette {
   position: fixed;
-  top: 25%;
+  top: 50%;
   right: 0%;
-  /* transform: translateY(-50%); */
+  transform: translateY(-50%);
   padding: 0px;
   color: white;
   display: grid;
@@ -291,7 +299,7 @@ path {
   #palette {
     position: fixed;
     top: 0%;
-    /* transform: translateY(0%); */
+    transform: translateY(0%);
     min-width: 100%;
     color: white;
     display: grid;

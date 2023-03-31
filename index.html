@@ -56,18 +56,18 @@
     </div>
     <canvas id="canvas"></canvas>
     <div id="toolbar">
-      <span class="item" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
-      <span class="item" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
-      <span class="item" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
-      <span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
-      <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
-      <span class="item" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>
-      <span class="item" onclick="board.addFrame()"><i class="fas fa-plus"></i></span>
-      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>
-      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>
-      <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
-      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
-      <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
+      <span class="item" title="Pencil" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
+      <span class="item" title="Eraser" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
+      <span class="item" title="Paint" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
+      <span class="item" title="Line" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
+      <span class="item" title="Circle" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
+      <span class="item" title="Ellipse" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>
+      <span class="item" title="Add Frame" onclick="board.addFrame()"><i class="fas fa-plus"></i></span>
+      <span class="item" title="Undo" onclick="board.undo()"><i class="fas fa-undo"></i></span>
+      <span class="item" title="Redo" onclick="board.redo()"><i class="fas fa-redo"></i></span>
+      <span class="item" title="Delete" onclick="board.clear()"><i class="fas fa-trash"></i></span>
+      <span class="item" title="Upload" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
+      <span class="item" title="View Frames" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
     </div>
     <div id="palette"></div>
     <div id="color-settings-popup" style="display: none;"> 
