@@ -181,6 +181,10 @@ body {
 }
 
 #toolbar {
+  gap: 10px;
+  background: #222;
+  justify-content: center;
+
   position: fixed;
   top: 50%;
   left: 0%;
@@ -200,6 +204,32 @@ body {
   width: 32px;
   font-family: Arial, FontAwesome;
   font-size: 24px;
+}
+
+.item::after {
+  content: attr(data-tooltip);
+  position:relative;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  font-size: 16px;
+  min-width: 90px;
+  text-align: center;
+}
+
+
+
+.item:hover::after,
+.item:hover::before {
+  opacity: 1;
 }
 
 #palette {
