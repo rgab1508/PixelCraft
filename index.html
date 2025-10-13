@@ -32,6 +32,7 @@
 <script src="lib/Transformation.js" async></script>
 <script src="lib/gif.js"></script>
 <script src="Canvas.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="menubtn">&#9776</div>
@@ -56,18 +57,150 @@
     </div>
     <canvas id="canvas"></canvas>
     <div id="toolbar">
-      <span class="item" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
-      <span class="item" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
-      <span class="item" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
-      <span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
-      <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
-      <span class="item" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>
-      <span class="item" onclick="board.addFrame()"><i class="fas fa-plus"></i></span>
-      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>
-      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>
-      <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
-      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
-      <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
+
+      <span class="item" onclick="board.setmode(0)" style="background-color: grey;" 
+
+      data-tooltip="Draw" 
+      data-name="Draw Tool"
+      data-info="The Pencil tool is the most basic tool and is used to draw pixels Freehand"
+      
+      >
+
+        <i class="fas fa-pencil-alt"></i>
+
+      </span>
+
+      <span class="item" onclick="board.setmode(1)" 
+
+      data-tooltip="Erase"
+      data-name="Eraser"
+      data-info="The Eraser tool is used to erase a given pixel 1 pixel at a time. It has dimensions 1 X 1 and is fixed."
+      
+      >
+
+      <i class="fas fa-eraser"></i>
+
+      </span>
+
+      <span class="item" onclick="board.setmode(2)"
+      data-tooltip="Fill"
+      data-name="Fill Bucket"
+      data-info="The Paint tool is used to Flood Fill a given color with a new color. It works smoothly for dimensions under 128 X 128."
+      
+      >
+      
+      <i class="fas fa-fill"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.setmode(3)"
+      data-tooltip="Slash"
+      data-name = "Slash Tool"
+      data-info = "The line tool is used to draw a line segment between 2 points using Bresenham line drawing algorithm. Click on tool and click on 2 points to draw a line segment between them."
+      
+      >
+      
+      <i class="fas fa-slash"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.setmode(4)"
+      data-tooltip="Circle"
+      data-name = "Circle Tool"
+      data-info = "The Circle Tool is used to draw a circle with a given centre and Radius using Midpoint Circle Algorithm."
+      
+      >
+      
+      <i class="far fa-circle"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.setmode(5)"
+      data-tooltip="Ellipse"
+      data-name="Ellipse"
+      data-info="The Ellipse Tool is used to draw an ellipse with given centre and it's radius along x-axis and y-axis."
+      
+      >
+
+      <i class="far fa-circle" style="transform: rotateX(45deg);"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.addFrame()"
+      data-tooltip="Add Frame"
+      data-name="Add Frame"
+      data-info="This tool adds the current state of canvas to the Frame Stack which can be later loaded or deleted. Each Frame is added with a delay of 100 ms, Same Frame can be multiple time to increase it's duration in GIF."
+      
+      >
+      
+      <i class="fas fa-plus"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.undo()"
+      data-tooltip="Undo"
+      data-name="Undo"
+      data-info="It is only useful for correcting small mistakes, hence, it is advised to draw with care, or, add a frame if doing a big change with chances of mistake."
+      
+      >
+      
+      <i class="fas fa-undo"></i>
+    
+      </span>
+
+      <span class="item" onclick="board.redo()" 
+      data-tooltip="Redo"
+      data-name="Redo"
+      data-info="Redo the last undone action, if any."
+
+      >
+
+      <i class="fas fa-redo"></i>
+
+      </span>
+
+      <span class="item" onclick="board.clear()"
+      data-tooltip="Clear"
+      data-name="Clear Windows"
+      data-info="This Tool is used to clear the current Canvas window."
+
+      >
+
+      <i class="fas fa-trash"></i>
+
+      </span>
+
+      <span class="item" onclick="board.addImage()"
+      data-tooltip="Upload Image"
+      data-name="Import Image"
+      data-info="This Tool is Used to import an image and convert it to Pixel Art of Given Dimensions."
+
+      >
+
+      <i class="fa fa-upload"></i>
+    
+      </span>
+
+      <span class="item" onclick="Frames.open()"
+      data-tooltip="View Frames"
+      data-name="View Frames"
+      data-info="This tool displays a Popup with all the current frames in the Frame stack.Load A Frame: Click on the Frame. Delete A Frame: Right Click / Long press on mobile, To delete a Frame."
+      >
+
+      <i class="fas fa-eye"></i>
+
+      </span>
+
+      <!--END OF TOOLS-->
+
+      <!--INFORMATION POPUP-->
+
+      <div id="infoBox">
+        <h3 id="infoTitle"></h3>
+        <p id="infoDesc"></p>
+      </div>
+
+
     </div>
     <div id="palette"></div>
     <div id="color-settings-popup" style="display: none;"> 
@@ -81,6 +214,38 @@
     </div>
 </body>
 <script type="text/javascript">
+  //Information popup code --------------------------Start---------------------
+
+  const infoBox = document.getElementById("infoBox");
+  const infoTitle = document.getElementById("infoTitle");
+  const infoDesc = document.getElementById("infoDesc");
+
+  document.querySelectorAll('.item').forEach(item => {
+    item.addEventListener('contextmenu', e => {
+      e.preventDefault();
+
+
+      const name = item.getAttribute('data-name');
+      const info = item.getAttribute('data-info');
+
+
+      infoTitle.textContent = name;
+      infoDesc.textContent = info;
+
+
+      infoBox.style.left = `${e.pageX + 10}px`;
+      infoBox.style.top = `${e.pageY + 10}px`;
+      infoBox.style.display = 'block';
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (!infoBox.contains(e.target)){
+      infoBox.style.display = 'none';
+    }
+  });
+
+  //Information popup code --------------------------End---------------------
 
 // override of finishRendering of gif.js
 GIF.prototype.finishRendering = function() {
